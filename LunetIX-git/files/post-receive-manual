@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd /var/www/html/puppet-modules && git pull
+
+truncate -s 0 PULP_MANIFEST
+
+for file in $(find . -i wholename "*/pkg/*.tar.gz")
+do
+  echo $file, `sha256sum $file | awk '{print $1}'`,`stat -c '%s' $file`>>PULP_MANIFEST
+done

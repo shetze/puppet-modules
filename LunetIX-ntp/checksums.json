@@ -1,0 +1,10 @@
+{
+  "README.md": "98b7c8c3f2ccaad68aa91a32e92a09b7",
+  "Rakefile": "20b80e526e351a74df2001f504e756d2",
+  "manifests/init.pp": "2e85f1a407920ec4a377f5224f04307b",
+  "metadata.json": "ab554cf5083d8ba065043874b42fb5fa",
+  "spec/classes/init_spec.rb": "90d955e36feb567bcf03099e656d80f2",
+  "spec/spec_helper.rb": "a55d1e6483344f8ec6963fcb2c220372",
+  "templates/ntp.conf.erb": "1916d699821df55587b1ec47b6e31131",
+  "tests/init.pp": "6c8e71361bfa267266a8e9d168072af7"
+}

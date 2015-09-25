@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cwd=$(pwd)
+tmpdir=$(mktemp -d)
+cd $tmpdir || exit -1
+pulp-puppet-module-builder --clean --output-dir=/var/www/html/puppet-modules --url=file:///srv/git/puppet-modules.git --branch=master
+cd $cwd
+rm -fr $tmpdir

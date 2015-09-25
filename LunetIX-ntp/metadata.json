@@ -1,0 +1,16 @@
+{
+  "name": "LunetIX-ntp",
+  "version": "0.2.0",
+  "author": "LunetIX",
+  "summary": "Manage NTP",
+  "license": "Apache 2.0",
+  "source": "",
+  "project_page": null,
+  "issues_url": null,
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    }
+  ]
+}

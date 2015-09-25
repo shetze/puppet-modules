@@ -1,0 +1,14 @@
+{
+  "README.md": "cd55d1117ae2613285808dfc7a040338",
+  "Rakefile": "20b80e526e351a74df2001f504e756d2",
+  "files/post-receive": "925f8725ac84d09ba4ea76bb95e86dac",
+  "files/post-receive-manual": "e5f3f55d203eeccbd18cc32ea13d8701",
+  "files/sclgit.sh": "122179965063eb57ba5788459eb8890d",
+  "manifests/client.pp": "17a2dc1bcfcf5aef8b5874a837c2f49d",
+  "manifests/init.pp": "b0ae1e4b315a01e12c8f724e6f2aef41",
+  "manifests/server.pp": "469926838421ffd6a79dfb776f6471a8",
+  "metadata.json": "7c0f7085e02da05e7fdb99c9d4e2f840",
+  "spec/classes/init_spec.rb": "1fe84a67c41bbbf384fa6d47833b8949",
+  "spec/spec_helper.rb": "a55d1e6483344f8ec6963fcb2c220372",
+  "tests/init.pp": "d84a581c3158331ef8151eb36fc8fbe1"
+}
