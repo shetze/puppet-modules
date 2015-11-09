@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Generic plan to create puppet modules from git repository</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>SATELLITE</name>
+          <description>The FQDN of the Red Hat Satellite.</description>
+          <defaultValue><%= @foreman_url %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ORG</name>
+          <description>This is the name of the organisation you are using on the Red Hat Satellite.</description>
+          <defaultValue><%=  @rhsm_organization_label %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_ID</name>
+          <description>The numeric ID of the RPM repository on the Red Hat Satellite that you want to use for your custom RPMs.</description>
+          <defaultValue><%= @ci_yum_repo_id %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PUPPET_REPO_ID</name>
+          <description>The numeric ID of the puppet module repository on the Red Hat Satellite that you want to use for your custom puppet modules.</description>
+          <defaultValue><%= @ci_puppet_repo_id %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TESTVM_ENV</name>
+          <description>The numeric ID of the environment you want to promote CI builds to. This will typically be a &apos;Crash&apos; or &apos;EngTest&apos; environment.
+
+You can find the IDs of your environments using:
+hammer lifecycle-environment list --organization &quot;Default_Organization&quot;</description>
+          <defaultValue><%= @ci_target_env %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>YUM_REPO</name>
+          <description>This is the location of the Yum repository on the Jenkins server used to export RPMs to the satellite server.</description>
+          <defaultValue>/var/www/html/pub/repos</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PUPPET_REPO</name>
+          <description>This is the location of the puppet repository on the Jenkins server used to export puppet modules to the satellite server.</description>
+          <defaultValue>/var/www/html/pub/puppet-modules</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CV</name>
+          <description>This is the name of the Content View on the satellite that you want to publish your build into.</description>
+          <defaultValue><%= @ci_content_view %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="org.jenkinsci.plugins.multiplescms.MultiSCM" plugin="multiple-scms@0.5">
+    <scms>
+      <hudson.plugins.git.GitSCM plugin="git@2.4.0">
+        <configVersion>2</configVersion>
+        <userRemoteConfigs>
+          <hudson.plugins.git.UserRemoteConfig>
+            <url>git@<%= @ci_git_host %>:CI.git</url>
+          </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+          <hudson.plugins.git.BranchSpec>
+            <name>*/master</name>
+          </hudson.plugins.git.BranchSpec>
+        </branches>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <submoduleCfg class="list"/>
+        <extensions>
+          <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+            <relativeTargetDir>scripts</relativeTargetDir>
+          </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+        </extensions>
+      </hudson.plugins.git.GitSCM>
+      <hudson.plugins.git.GitSCM plugin="git@2.4.0">
+        <configVersion>2</configVersion>
+        <userRemoteConfigs>
+          <hudson.plugins.git.UserRemoteConfig>
+            <url>git@<%= @ci_git_host %>:puppet-modules.git</url>
+          </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+          <hudson.plugins.git.BranchSpec>
+            <name>*/devel</name>
+          </hudson.plugins.git.BranchSpec>
+        </branches>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <submoduleCfg class="list"/>
+        <extensions>
+          <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+            <relativeTargetDir>puppet-modules</relativeTargetDir>
+          </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+        </extensions>
+      </hudson.plugins.git.GitSCM>
+    </scms>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * * </spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;#####################################################&quot;
+echo &quot;#                BUILDING PUPPET MODULES            #&quot;
+echo &quot;#####################################################&quot;
+/bin/bash -x ${WORKSPACE}/scripts/puppetbuild.sh ${WORKSPACE}/puppet-modules</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo &quot;#####################################################&quot;
+echo &quot;#         PUSH PUPPET MODULES TO SATELLITE          #&quot;
+echo &quot;#####################################################&quot;
+/bin/bash -x ${WORKSPACE}/scripts/puppetpush.sh ${WORKSPACE}/artefacts
+echo &quot;#####################################################&quot;
+echo &quot;#           REPUBLISH CONTENT VIEW                  #&quot;
+echo &quot;#####################################################&quot;
+/bin/bash -x ${WORKSPACE}/scripts/publishcv.sh</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <org.tap4j.plugin.TapPublisher plugin="tap@1.23">
+      <testResults>test_results/*.tap</testResults>
+      <failIfNoResults>false</failIfNoResults>
+      <failedTestsMarkBuildAsFailure>false</failedTestsMarkBuildAsFailure>
+      <outputTapToConsole>false</outputTapToConsole>
+      <enableSubtests>false</enableSubtests>
+      <discardOldReports>false</discardOldReports>
+      <todoIsFailure>false</todoIsFailure>
+      <includeCommentDiagnostics>false</includeCommentDiagnostics>
+      <validateNumberOfTests>false</validateNumberOfTests>
+      <planRequired>true</planRequired>
+      <verbose>true</verbose>
+    </org.tap4j.plugin.TapPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>
