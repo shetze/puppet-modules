@@ -44,6 +44,8 @@
 #
 # [*mock_rhel7_repos*]
 #
+# [*sonar_database_host*]
+#
 # === Variables
 #
 # Here you should define a list of variables that this module would require.
@@ -88,6 +90,7 @@ class buildhost (
   $mock_entitlement_path = '/etc/pki/entitlement',
   $mock_rhel6_repos = "",
   $mock_rhel7_repos = "",
+  $sonar_database_host = "localhost",
 ){
 
 include git::server
@@ -98,5 +101,6 @@ if $deploy_demo {
   include buildhost::nexus
   include buildhost::sonar
 }
+class{ '::git': git_repodir => $git_repodir }
 
 }

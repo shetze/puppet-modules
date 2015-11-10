@@ -1,6 +1,6 @@
 class buildhost::jenkins {
   include jenkins
-  class{ '::jenkins': repo => $create_jenkins_repo }
+  class{ '::jenkins': repo => $::buildhost::create_jenkins_repo }
   jenkins::plugin { 'scm-api': }
   jenkins::plugin { 'git-client': }
   jenkins::plugin { 'git': }
@@ -21,8 +21,8 @@ class buildhost::jenkins {
 
   exec { 'jenkins_permit_git':
     require => [ Exec['jenkins_ssh_key'], ],
-    command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $git_repodir/.ssh/authorized_keys",
-    unless => "grep -q jenkins $git_repodir/.ssh/authorized_keys",
+    command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $::buildhost::git_repodir/.ssh/authorized_keys",
+    unless => "grep -q jenkins $::buildhost::git_repodir/.ssh/authorized_keys",
     path => [ "/usr/bin/", "/usr/sbin/" ],
   }
 
@@ -68,7 +68,7 @@ class buildhost::jenkins {
     config => template("buildhost/baseline-packages-prod.xml.erb"),
   }
 
-  if $deploy_demo {
+  if $::buildhost::deploy_demo {
   jenkins::job { 'ticket-monster-dev':
     config => template("buildhost/ticket-monster-dev.xml.erb"),
   }
@@ -84,7 +84,7 @@ class buildhost::jenkins {
   }
 
   package { "apache-maven":
-    ensure => $package_ensure,
+    ensure => $::buildhost::package_ensure,
   }
   file { '/var/lib/jenkins/hudson.tasks.Maven.xml':
     ensure => file,

@@ -37,7 +37,7 @@ class buildhost::sonar {
 
   class { '::postgresql::server':
     ip_mask_allow_all_users => '0.0.0.0/0',
-    listen_addresses        => $listen_addresses,
+    listen_addresses        => $::buildhost::sonar_database_host,
   }
   postgresql::server::db { 'sonar':
     user     => 'sonar',
