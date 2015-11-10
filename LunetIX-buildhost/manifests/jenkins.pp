@@ -46,7 +46,7 @@ class buildhost::jenkins {
 
   exec { "firewalld_prepare_jenkins":
     require => [ Package["firewalld"], ],
-    command => "firewall-cmd --permanent --add-port=8081/tcp &&
+    command => "firewall-cmd --permanent --add-port=8080/tcp &&
                 firewall-cmd  --complete-reload",
     unless => "firewall-cmd --list-all|grep -q 8080",
     path => "/usr/bin/",
