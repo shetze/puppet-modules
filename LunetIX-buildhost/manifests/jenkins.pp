@@ -52,19 +52,6 @@ class buildhost::jenkins {
     path => "/usr/bin/",
   }
 
-  if $deploy_demo {
-  jenkins::job { 'ticket-monster-dev':
-    config => template("buildhost/ticket-monster-dev.xml.erb"),
-  }
-  jenkins::job { 'ticket-monster-sonar':
-    config => template("buildhost/ticket-monster-sonar.xml.erb"),
-  }
-  jenkins::job { 'ticket-monster-systest':
-    config => template("buildhost/ticket-monster-systest.xml.erb"),
-  }
-  jenkins::job { 'ticket-monster-prod':
-    config => template("buildhost/ticket-monster-prod.xml.erb"),
-  }
   jenkins::job { 'baseline-template':
     config => template("buildhost/baseline-template.xml.erb"),
   }
@@ -79,6 +66,20 @@ class buildhost::jenkins {
   }
   jenkins::job { 'baseline-packages-prod':
     config => template("buildhost/baseline-packages-prod.xml.erb"),
+  }
+
+  if $deploy_demo {
+  jenkins::job { 'ticket-monster-dev':
+    config => template("buildhost/ticket-monster-dev.xml.erb"),
+  }
+  jenkins::job { 'ticket-monster-sonar':
+    config => template("buildhost/ticket-monster-sonar.xml.erb"),
+  }
+  jenkins::job { 'ticket-monster-systest':
+    config => template("buildhost/ticket-monster-systest.xml.erb"),
+  }
+  jenkins::job { 'ticket-monster-prod':
+    config => template("buildhost/ticket-monster-prod.xml.erb"),
   }
   }
 

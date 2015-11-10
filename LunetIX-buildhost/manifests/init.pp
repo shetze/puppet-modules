@@ -92,9 +92,11 @@ class buildhost (
 
 include git::server
 include buildhost::jenkins
-include buildhost::nexus
-include buildhost::sonar
 include buildhost::mock
 include buildhost::hammer
+if $deploy_demo {
+  include buildhost::nexus
+  include buildhost::sonar
+}
 
 }
