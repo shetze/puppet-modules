@@ -16,7 +16,7 @@ class buildhost::nexus {
   }
   file { '/opt/sonatype-work/nexus/conf/nexus.xml':
     ensure => file,
-    content => template("$templates/nexus.xml.erb"),
+    content => template("buildhost/nexus.xml.erb"),
     owner => 'nexus',
     group => 'nexus',
     mode => "644",
@@ -24,7 +24,7 @@ class buildhost::nexus {
   }
   file { '/opt/sonatype-work/nexus/conf/nexus.env':
     ensure => file,
-    content => template("$templates/nexus.env.erb"),
+    content => template("buildhost/nexus.env.erb"),
     owner => 'nexus',
     group => 'nexus',
     mode => "644",
@@ -32,7 +32,7 @@ class buildhost::nexus {
   }
   file { '/usr/lib/systemd/system/nexus.service':
     ensure => file,
-    content => template("$templates/nexus.service.erb"),
+    content => template("buildhost/nexus.service.erb"),
     owner => 'nexus',
     group => 'nexus',
     mode => "644",

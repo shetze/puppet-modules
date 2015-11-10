@@ -11,7 +11,7 @@ class buildhost::hammer {
   }
   file { '/var/lib/jenkins/.hammer/cli_config.yml':
     ensure => file,
-    content => template("$templates/hammer-cli_config.yml.erb"),
+    content => template("buildhost/hammer-cli_config.yml.erb"),
     group => 'jenkins',
     mode => "600",
     require => [ Package['rubygem-hammer_cli'], File['/var/lib/jenkins/.hammer/'], ],

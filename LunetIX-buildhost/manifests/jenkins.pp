@@ -89,7 +89,7 @@ class buildhost::jenkins {
   }
   file { '/var/lib/jenkins/hudson.tasks.Maven.xml':
     ensure => file,
-    content => template("$templates/hudson.tasks.Maven.xml.erb"),
+    content => template("buildhost/hudson.tasks.Maven.xml.erb"),
     owner => 'jenkins',
     group => 'jenkins',
     mode => "644",
@@ -97,7 +97,7 @@ class buildhost::jenkins {
   }
   file { '/var/lib/jenkins/maven-settings.xml':
     ensure => file,
-    content => template("$templates/maven-settings.xml.erb"),
+    content => template("buildhost/maven-settings.xml.erb"),
     owner => 'jenkins',
     group => 'jenkins',
     mode => "644",

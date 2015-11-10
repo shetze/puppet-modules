@@ -13,7 +13,7 @@ class buildhost::sonar {
   }
   file { '/opt/sonarqube/conf/sonar.properties':
     ensure => file,
-    content => template("$templates/sonar.properties.erb"),
+    content => template("buildhost/sonar.properties.erb"),
     owner => 'sonar',
     group => 'sonar',
     mode => "644",
@@ -21,7 +21,7 @@ class buildhost::sonar {
   }
   file { '/usr/lib/systemd/system/sonar.service':
     ensure => file,
-    content => template("$templates/sonar.service.erb"),
+    content => template("buildhost/sonar.service.erb"),
     owner => 'sonar',
     group => 'sonar',
     mode => "644",

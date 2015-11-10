@@ -1,6 +1,6 @@
 {
   "name": "LunetIX-dockerhost",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "author": "LunetIX",
   "summary": "module to install and configure a  docker host",
   "license": "Apache 2.0",

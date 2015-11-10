@@ -1,6 +1,6 @@
 {
   "name": "LunetIX-buildhost",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "author": "LunetIX",
   "summary": "compose a Mock/Jenkins build host.",
   "license": "Apache 2.0",
@@ -12,7 +12,7 @@
     { "name": "puppetlabs/postgresql", "version_range": ">= 1.0.0" },
     { "name": "rtyler/jenkins", "version_range": ">= 1.6.0" },
     { "name": "puppetlabs/java","version_requirement":">= 1.0.1 <2.0.0" },
-    { "name": "puppetlabs/concat","version_requirement":">= 1.1.0 <2.0.0" },
+    { "name": "puppetlabs/concat","version_requirement":">= 1.1.0 <2.0.0" }
   ]
 }
 
