@@ -101,6 +101,6 @@ if $deploy_demo {
   include buildhost::nexus
   include buildhost::sonar
 }
-class{ '::git': git_repodir => $git_repodir }
+class{ '::git::server': git_repodir => $git_repodir }
 
 }
