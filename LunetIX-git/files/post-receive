@@ -4,13 +4,25 @@ cwd=$(pwd)
 tmpdir=$(mktemp -d)
 cd $tmpdir || exit -1
 
+git clone file:///srv/git/puppet-modules.git
+cd puppet-modules
+
+for dir in *; do
+  [ -d $dir ] || continue
+  cd $dir
+  [ -f metadata.json ] || continue
+  puppet module build
+  cp pkg/*.tar.gz /var/www/html/puppet-modules
+done
 
 
-cd /var/www/html/puppet-modules && git pull
+cd /var/www/html/puppet-modules
 
 truncate -s 0 PULP_MANIFEST
 
-for file in $(find . -i wholename "*/pkg/*.tar.gz")
+for file in $(find . -i wholename "*.tar.gz")
 do
   echo $file, `sha256sum $file | awk '{print $1}'`,`stat -c '%s' $file`>>PULP_MANIFEST
 done
+
+cd $cwd
