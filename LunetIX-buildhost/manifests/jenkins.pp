@@ -1,5 +1,3 @@
-
-
 class buildhost::jenkins {
   include jenkins
   class{ '::jenkins': repo => $create_jenkins_repo }
@@ -22,9 +20,9 @@ class buildhost::jenkins {
   }
 
   exec { 'jenkins_permit_git':
-    require => [ Exec['jenkins_ssh_key'], File["$git_repodir/.ssh"] ],
-    command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $repodir/.ssh/authorized_keys",
-    unless => "grep -q jenkins $repodir/.ssh/authorized_keys",
+    require => [ Exec['jenkins_ssh_key'], ],
+    command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $git_repodir/.ssh/authorized_keys",
+    unless => "grep -q jenkins $git_repodir/.ssh/authorized_keys",
     path => [ "/usr/bin/", "/usr/sbin/" ],
   }
 
@@ -56,31 +54,31 @@ class buildhost::jenkins {
 
   if $deploy_demo {
   jenkins::job { 'ticket-monster-dev':
-    config => template("${templates}/ticket-monster-dev.xml.erb"),
+    config => template("buildhost/ticket-monster-dev.xml.erb"),
   }
   jenkins::job { 'ticket-monster-sonar':
-    config => template("${templates}/ticket-monster-sonar.xml.erb"),
+    config => template("buildhost/ticket-monster-sonar.xml.erb"),
   }
   jenkins::job { 'ticket-monster-systest':
-    config => template("${templates}/ticket-monster-systest.xml.erb"),
+    config => template("buildhost/ticket-monster-systest.xml.erb"),
   }
   jenkins::job { 'ticket-monster-prod':
-    config => template("${templates}/ticket-monster-prod.xml.erb"),
+    config => template("buildhost/ticket-monster-prod.xml.erb"),
   }
   jenkins::job { 'baseline-template':
-    config => template("${templates}/baseline-template.xml.erb"),
+    config => template("buildhost/baseline-template.xml.erb"),
   }
   jenkins::job { 'puppet-modules-dev':
-    config => template("${templates}/puppet-modules-dev.xml.erb"),
+    config => template("buildhost/puppet-modules-dev.xml.erb"),
   }
   jenkins::job { 'puppet-modules-prod':
-    config => template("${templates}/puppet-modules-prod.xml.erb"),
+    config => template("buildhost/puppet-modules-prod.xml.erb"),
   }
   jenkins::job { 'baseline-packages-dev':
-    config => template("${templates}/baseline-packages-dev.xml.erb"),
+    config => template("buildhost/baseline-packages-dev.xml.erb"),
   }
   jenkins::job { 'baseline-packages-prod':
-    config => template("${templates}/baseline-packages-prod.xml.erb"),
+    config => template("buildhost/baseline-packages-prod.xml.erb"),
   }
   }
 
