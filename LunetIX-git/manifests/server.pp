@@ -57,7 +57,7 @@ file { "$git_repodir/.ssh":
 
 exec { "git_init_bare":
     command => "git init --bare ${git_repodir}/${git_puppet_project}.git",
-    path => [ '/opt/rh/git19/root/usr/bin/', '/usr/bin/' ],
+    path => [ '/bin/', '/usr/bin/' ],
     unless => "test -d ${git_repodir}/${git_puppet_project}.git/objects",
     require => [ Package["$gitpackage"], File["$git_repodir"], Exec["selinux_prepare_git"] ],
     before => File["${git_repodir}/${git_puppet_project}.git/hooks/post-receive"],
