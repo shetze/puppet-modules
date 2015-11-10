@@ -22,7 +22,7 @@ class buildhost::jenkins {
   }
 
   exec { 'jenkins_permit_git':
-    require => [ Exec['jenkins_ssh_key'], File["$repodir/.ssh"] ],
+    require => [ Exec['jenkins_ssh_key'], File["$git_repodir/.ssh"] ],
     command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $repodir/.ssh/authorized_keys",
     unless => "grep -q jenkins $repodir/.ssh/authorized_keys",
     path => [ "/usr/bin/", "/usr/sbin/" ],
