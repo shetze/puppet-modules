@@ -95,6 +95,6 @@ include buildhost::jenkins
 include buildhost::nexus
 include buildhost::sonar
 include buildhost::mock
-include buildhost::hamme
+include buildhost::hammer
 
 }
