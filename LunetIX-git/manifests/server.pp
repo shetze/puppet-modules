@@ -5,6 +5,7 @@ class git::server (
   $gitgroup = 'git',
   $gitpackage = 'git',
   $package_ensure = 'installed',
+  $jenkins_ssh_pub_key = '',
 ){
 
 exec { "selinux_prepare_git":
@@ -69,5 +70,13 @@ file { "${git_repodir}/${git_puppet_project}.git/hooks/post-receive":
     group => $gitgroup,
     mode => "755",
     source => "puppet:///modules/git/post-receive",
+}
+
+ssh_authorized_key { 'jenkins_ssh_pub_key':
+    user    => 'git',
+    type    => 'rsa',
+    ensure  => present,
+    key     => "$jenkins_ssh_pub_key",
+    require => File['$git_repodir/.ssh'],
 }
 }

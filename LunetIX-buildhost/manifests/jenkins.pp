@@ -1,4 +1,8 @@
-class buildhost::jenkins {
+class buildhost::jenkins (
+	$jenkins_ssh_priv_key = ''
+	)
+
+{
   include jenkins
   class{ '::jenkins': repo => $::buildhost::create_jenkins_repo }
   jenkins::plugin { 'scm-api': }
@@ -12,33 +16,48 @@ class buildhost::jenkins {
   jenkins::plugin { 'parameterized-trigger': }
   jenkins::plugin { 'sonar': }
 
-  exec { 'jenkins_ssh_key':
-    require => [ User['jenkins'], ],
-    command => "runuser --command=\"/usr/bin/ssh-keygen -q -f /var/lib/jenkins/.ssh/id_rsa -P ''\" --shell=/bin/bash jenkins",
-    creates => '/var/lib/jenkins/.ssh/id_rsa',
-    path => [ "/usr/bin/", "/usr/sbin/" ],
-  }
+  #exec { 'jenkins_ssh_key':
+  #  require => [ User['jenkins'], ],
+  #  command => "runuser --command=\"/usr/bin/ssh-keygen -q -f /var/lib/jenkins/.ssh/id_rsa -P ''\" --shell=/bin/bash jenkins",
+  #  creates => '/var/lib/jenkins/.ssh/id_rsa',
+  #  path => [ "/usr/bin/", "/usr/sbin/" ],
+  #}
 
-  exec { 'jenkins_permit_git':
-    require => [ Exec['jenkins_ssh_key'], ],
-    command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $::buildhost::git_repodir/.ssh/authorized_keys",
-    unless => "grep -q jenkins $::buildhost::git_repodir/.ssh/authorized_keys",
-    path => [ "/usr/bin/", "/usr/sbin/" ],
-  }
+  #exec { 'jenkins_permit_git':
+  #  require => [ Exec['jenkins_ssh_key'], ],
+  #  command => "cat /var/lib/jenkins/.ssh/id_rsa.pub >> $::buildhost::git_repodir/.ssh/authorized_keys",
+  #  unless => "grep -q jenkins $::buildhost::git_repodir/.ssh/authorized_keys",
+  #  path => [ "/usr/bin/", "/usr/sbin/" ],
+  #}
 
-  exec { 'jenkins_know_localhost':
-    require => [ Exec['jenkins_ssh_key'], ],
-    command => "echo -n \"$fqdn \" >> /var/lib/jenkins/.ssh/known_hosts && cat /etc/ssh/ssh_host_ecdsa_key.pub >> /var/lib/jenkins/.ssh/known_hosts",
-    unless => "grep -q $fqdn /var/lib/jenkins/.ssh/known_hosts",
-    path => [ "/usr/bin/", "/usr/sbin/" ],
-  }
-
-  file { '/var/lib/jenkins/.ssh/known_hosts':
-    require => [ Exec['jenkins_know_localhost'], ],
+  file { '/var/lib/jenkins/.ssh/id_rsa':
     owner => jenkins,
     group => jenkins,
-    mode => "600"
+    mode => "400"
+    content => template('buildhost/id-rsa.erb'),
+    require => Package['jenkins'],
   }
+
+ # exec { 'jenkins_know_localhost':
+ #  require => [ Exec['jenkins_ssh_key'], ],
+ #   command => "echo -n \"$fqdn \" >> /var/lib/jenkins/.ssh/known_hosts && cat /etc/ssh/ssh_host_ecdsa_key.pub >> /var/lib/jenkins/.ssh/known_hosts",
+ #   unless => "grep -q $fqdn /var/lib/jenkins/.ssh/known_hosts",
+ #   path => [ "/usr/bin/", "/usr/sbin/" ],
+ # }
+
+  exec { 'jenkins_known_hosts_localhost':
+    command => "/usr/bin/ssh-keyscan -t rsa $fqdn",
+    unless => "grep -q $fqdn /var/lib/jenkins/.ssh/known_hosts",
+    path => [ "/usr/bin/", "/usr/sbin/" ],
+    require => Package['jenkins'],
+  }
+ 
+#  file { '/var/lib/jenkins/.ssh/known_hosts':
+#    require => [ Exec['jenkins_know_localhost'], ],
+#    owner => jenkins,
+#    group => jenkins,
+#    mode => "600"
+#  }
 
   package { 'firewalld':
   ensure => 'installed',
