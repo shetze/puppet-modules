@@ -20,7 +20,7 @@ cd /var/www/html/puppet-modules
 
 truncate -s 0 PULP_MANIFEST
 
-for file in $(find . -i wholename "*.tar.gz")
+for file in $(find . -iwholename "*.tar.gz")
 do
   echo $file, `sha256sum $file | awk '{print $1}'`,`stat -c '%s' $file`>>PULP_MANIFEST
 done
