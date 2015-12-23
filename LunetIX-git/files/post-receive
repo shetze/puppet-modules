@@ -13,6 +13,7 @@ for dir in *; do
   [ -f metadata.json ] || continue
   puppet module build
   cp pkg/*.tar.gz /var/www/html/puppet-modules
+  cd ..
 done
 
 
