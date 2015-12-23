@@ -15,4 +15,17 @@ Futher you need EPEL, apache-maven and jenkins products synced into your Satelli
 Add these products / repos to your Content View and create a host using the buildhost puppet class.
 This leads to a basic build host capable to create puppet modules for smoke tests.
 
+The puppet module build is triggerd autmatically by git commits, so you may want to mirror these upstream modules into your own buildhost git:
+
+git clone --mirror https://github.com/shetze/puppet-modules.git
+cd puppet-modules.git
+git remote set-url --push origin git@your.git.host:puppet-modules.git
+git push --mirror
+
+To merge upstream modifications, return to the mirror clone and do:
+git fetch -p origin
+git push --mirror
+
+
+
 TBC
