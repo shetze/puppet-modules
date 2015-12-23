@@ -1,6 +1,6 @@
 {
   "name": "LunetIX-buildhost",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "author": "LunetIX",
   "summary": "compose a Mock/Jenkins build host.",
   "license": "Apache 2.0",

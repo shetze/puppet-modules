@@ -72,11 +72,16 @@ file { "${git_repodir}/${git_puppet_project}.git/hooks/post-receive":
     source => "puppet:///modules/git/post-receive",
 }
 
+user { $gituser:
+    ensure => present,
+    purge_ssh_keys => false,
+}
+
 ssh_authorized_key { 'jenkins_ssh_pub_key':
     user    => 'git',
     type    => 'rsa',
     ensure  => present,
     key     => "$jenkins_ssh_pub_key",
-    require => File['$git_repodir/.ssh'],
+    require => File["$git_repodir/.ssh"],
 }
 }
