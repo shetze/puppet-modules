@@ -46,7 +46,7 @@ file { "$git_repodir":
     ensure => directory,
     owner => $gituser,
     group => $gitgroup,
-    mode => "775",
+    mode => "700",
 }
 
 file { "$git_repodir/.ssh":
