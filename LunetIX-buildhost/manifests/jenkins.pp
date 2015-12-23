@@ -33,7 +33,7 @@ class buildhost::jenkins (
   file { '/var/lib/jenkins/.ssh/id_rsa':
     owner => jenkins,
     group => jenkins,
-    mode => "400"
+    mode => "400",
     content => template('buildhost/id-rsa.erb'),
     require => Package['jenkins'],
   }
