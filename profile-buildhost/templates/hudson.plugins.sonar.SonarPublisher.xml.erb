@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.sonar.SonarPublisher_-DescriptorImpl plugin="sonar@2.2.1">
+  <installations>
+    <hudson.plugins.sonar.SonarInstallation>
+      <name>sonarqube</name>
+      <disabled>false</disabled>
+      <serverUrl>http://<%= @ci_build_host %>:9000</serverUrl>
+      <mojoVersion></mojoVersion>
+      <databaseUrl></databaseUrl>
+      <databaseLogin></databaseLogin>
+      <additionalProperties></additionalProperties>
+      <triggers>
+        <skipScmCause>false</skipScmCause>
+        <skipUpstreamCause>false</skipUpstreamCause>
+        <envVar></envVar>
+      </triggers>
+      <sonarLogin>sonar</sonarLogin>
+      <databaseSecret>ok/SQe+PhRVx7lorQOpZMw==</databaseSecret>
+      <sonarSecret>04hYC/5LF/TvbV4YXREXVhK+UPOuKzl1Hb8tIlS4Q9E=</sonarSecret>
+    </hudson.plugins.sonar.SonarInstallation>
+  </installations>
+</hudson.plugins.sonar.SonarPublisher_-DescriptorImpl>

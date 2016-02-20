@@ -1,0 +1,13 @@
+forge 'bx-bld-dev01.lunetix.org/puppet-modules'
+
+mod 'buildhost', :git => 'git@bx-bld-dev01.lunetix.org:profile-buildhost'
+mod 'git', :git => 'git@bx-bld-dev01.lunetix.org:module-git'
+
+mod 'puppetlabs/stdlib'
+mod 'puppetlabs/postgresql'
+mod 'puppetlabs/concat'
+mod 'puppetlabs/apache'
+mod 'rtyler/jenkins', '1.6.1'
+mod 'camptocamp/archive'
+mod 'nanliu/staging'
+mod 'puppetlabs/java'

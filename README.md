@@ -11,11 +11,14 @@ dockerhost provides a host profile for a container host that is used as staging 
 
 
 To bootstrap this infrastructure you first need to clone this repo, build the puppet modules, load them into the Satellite and create a Content View with the git and buildhost modules from this repo and camptocamp/archive, puppetlabs/concat, puppetlabs/java, rtyler/jenkins, puppetlabs/postgresql and puppetlabs/stdlib to resolve the dependencies.
+
+A r10k control setup is provided for convenience to automate development of the git module and the buildhost profile.
+
 Futher you need EPEL, apache-maven and jenkins products synced into your Satellite. (The http://pkg.jenkins-ci.org/redhat-stable/ repo is quite large so I prefer to manually upload current packages into my Jenkins product.)
 Add these products / repos to your Content View and create a host using the buildhost puppet class.
 This leads to a basic build host capable to create puppet modules for smoke tests.
 
-The puppet module build is triggerd autmatically by git commits, so you may want to mirror these upstream modules into your own buildhost git:
+The puppet module build is triggerd autmatically by git commits, so you may want to mirror these upstream modules into your own buildhost git. As prereq you need to add your ssh key to the git authorized_keys. Then you do:
 
 ~~~
 git clone --mirror https://github.com/shetze/puppet-modules.git
