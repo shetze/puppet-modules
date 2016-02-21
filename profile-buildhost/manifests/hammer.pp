@@ -1,9 +1,13 @@
 class buildhost::hammer (
   $hammer_user = admin,
-  $hammer_passwd = 'OhjahNg2',
+  $hammer_passwd = 'akwBhTQ8uBytPcUs',
 ) {
 
   package { 'rubygem-hammer_cli':
+    ensure => 'installed',
+  }
+
+  package { 'rubygem-hammer_cli_katello':
     ensure => 'installed',
   }
 
