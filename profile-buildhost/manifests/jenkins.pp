@@ -116,5 +116,13 @@ class buildhost::jenkins (
     mode    => '0644',
     require => [ Package['apache-maven'], Package['jenkins'], ],
   }
-  
+
+  exec { 'jenkins_memberof_mock':
+    command => 'groupmems --group mock --add jenkins',
+    unless  => 'grep -q "mock:.*jenkins" /etc/group',
+    onlyif  => 'grep -q "mock:" /etc/group',
+    path    => [ '/usr/bin/', '/usr/sbin/' ],
+    require => [ Package['jenkins'], Package['mock'] ],
+  }
+
 }
