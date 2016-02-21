@@ -31,6 +31,7 @@ class buildhost::sonar (
   file { '/var/lib/jenkins/hudson.plugins.sonar.SonarPublisher.xml':
     ensure  => file,
     content => template('buildhost/hudson.plugins.sonar.SonarPublisher.xml.erb'),
+    replace => 'no',
     owner   => 'jenkins',
     group   => 'jenkins',
     mode    => '0644',
