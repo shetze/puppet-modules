@@ -14,7 +14,7 @@ To bootstrap this infrastructure you first need to clone this repo, build the pu
 
 A r10k control setup is provided for convenience to automate development of the git module and the buildhost profile.
 
-Futher you need EPEL, apache-maven and jenkins products synced into your Satellite. (The http://pkg.jenkins-ci.org/redhat-stable/ repo is quite large so I prefer to manually upload current packages into my Jenkins product.)
+Futher you need [EPEL](https://dl.fedoraproject.org/pub/epel/7/x86_64/), [apache-maven](https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-7/x86_64/) and [Jenkins](http://pkg.jenkins-ci.org/redhat-stable/) products synced into your Satellite. (The http://pkg.jenkins-ci.org/redhat-stable/ repo is quite large so I prefer to manually upload current packages into my Jenkins product.)
 Add these products / repos to your Content View and create a host using the buildhost puppet class.
 This leads to a basic build host capable to create puppet modules for smoke tests.
 
