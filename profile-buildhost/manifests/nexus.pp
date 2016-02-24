@@ -9,7 +9,7 @@ class buildhost::nexus {
   }
   package { 'nexus':
     ensure  => 'installed',
-    require => [ User['nexus'], Package['java-1.8.0-openjdk'], ],
+    require => User['nexus'],
   }
   file { '/opt/sonatype-work/nexus/conf/':
     ensure  => directory,
