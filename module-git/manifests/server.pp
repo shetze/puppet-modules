@@ -46,7 +46,7 @@ file { "$git_repobase":
 file { "$git_repobase/.ssh":
     ensure => directory,
     owner => $git_user,
-    group => $gitgroup,
+    group => $git_group,
     mode => "700",
 }
 
