@@ -11,7 +11,7 @@ package { "$git_package":
     ensure => $package_ensure,
 }
 
-user { $gituser:
+user { $git_user:
     ensure => present,
     purge_ssh_keys => false,
 }
@@ -43,9 +43,9 @@ file { "$git_repobase":
     mode => "700",
 }
 
-file { "$git_repodir/.ssh":
+file { "$git_repobase/.ssh":
     ensure => directory,
-    owner => $gituser,
+    owner => $git_user,
     group => $gitgroup,
     mode => "700",
 }
