@@ -19,6 +19,7 @@ file { "$git_repodir/.ssh":
 
 ssh_authorized_key { "${allow_user}":
     user    => $gituser,
+    target  => "/srv/$gituser/.ssh/authorized_keys",
     type    => 'rsa',
     ensure  => present,
     key     => "$public_key",
