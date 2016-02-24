@@ -11,7 +11,7 @@ class buildhost::sonar (
   }
   package { 'sonarqube':
     ensure  => 'installed',
-    require => [ User['sonar'], Package['java-1.8.0-openjdk'], ],
+    require => User['sonar'],
   }
   file { '/opt/sonarqube/conf/sonar.properties':
     ensure  => file,
