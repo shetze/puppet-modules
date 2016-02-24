@@ -1,7 +1,7 @@
 class buildhost::jenkins (
   $jenkins_ssh_priv_key = '',
   $maven_package_ensure = true,
-  $git_repodir = '/srv/git',
+  $git_repobase = '/srv/git',
   $create_jenkins_repo = false,
   $deploy_demo = false,
   $ci_yum_repo_id = 160,
@@ -61,6 +61,10 @@ class buildhost::jenkins (
     owner   => jenkins,
     group   => jenkins,
     mode    => '0600'
+  }
+
+  package { 'java-1.8.0-openjdk-devel':
+    ensure => 'installed',
   }
 
   package { 'firewalld':
