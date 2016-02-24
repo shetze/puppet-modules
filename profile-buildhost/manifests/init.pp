@@ -30,7 +30,7 @@
 #
 # [*deploy_demo*]
 #
-# [*git_repodir*]
+# [*git_repobase*]
 #
 # [*create_jenkins_repo*]
 #
@@ -84,7 +84,7 @@ class buildhost (
   $deploy_ci_pipeline = true,
   $deploy_demo = true,
   $deploy_git = true,
-  $git_repodir = '/srv/git',
+  $git_repobase = '/srv/git',
   $create_jenkins_repo = false,
   $hammer_user = 'jenkins',
   $hammer_passwd = 'OhjahNg2',
@@ -133,7 +133,7 @@ GzOlH77KKeXAikTnTX5uDWHI31G39yf4R1rOqgMLBacSTj1+LNGMfxY=
 
   class { '::buildhost::jenkins':
     jenkins_ssh_priv_key =>   $jenkins_ssh_priv_key,
-    git_repodir          =>   $git_repodir,
+    git_repobase         =>   $git_repobase,
     create_jenkins_repo  =>   $create_jenkins_repo,
     deploy_demo          =>   $deploy_demo,
     maven_package_ensure =>   $maven_package_ensure,

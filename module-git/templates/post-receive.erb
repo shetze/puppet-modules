@@ -4,7 +4,7 @@ cwd=$(pwd)
 tmpdir=$(mktemp -d)
 cd $tmpdir || exit -1
 
-git clone file://<%= @git_repodir %>/<%= @repo %>.git
+git clone file://<%= @git_repobase %>/<%= @repo %>.git
 cd <%= @repo %>
 
 for dir in *; do
