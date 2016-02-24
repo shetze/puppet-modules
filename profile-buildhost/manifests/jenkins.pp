@@ -32,12 +32,21 @@ class buildhost::jenkins (
   jenkins::plugin { 'parameterized-trigger': }
   jenkins::plugin { 'sonar': }
 
+  file { '/var/lib/jenkins/.ssh/':
+    ensure => directory,
+    owner   => jenkins,
+    group   => jenkins,
+    mode    => '0700',
+    content => template('buildhost/id-rsa.erb'),
+    require => Package['jenkins'],
+  }
+
   file { '/var/lib/jenkins/.ssh/id_rsa':
     owner   => jenkins,
     group   => jenkins,
     mode    => '0400',
     content => template('buildhost/id-rsa.erb'),
-    require => Package['jenkins'],
+    require => [ Package['jenkins'], File['/var/lib/jenkins/.ssh/'] ],
   }
 
   exec { 'jenkins_know_githost':
