@@ -124,6 +124,13 @@ GzOlH77KKeXAikTnTX5uDWHI31G39yf4R1rOqgMLBacSTj1+LNGMfxY=
   $maven_package_ensure = true,
 ) {
 
+  if $deploy_git {
+    class { '::buildhost::git':
+      jenkins_ssh_pub_key => $jenkins_ssh_pub_key,
+      jenkins_user => $jenkins_user,
+    }
+  }
+
   class { '::buildhost::jenkins':
     jenkins_ssh_priv_key =>   $jenkins_ssh_priv_key,
     git_repodir          =>   $git_repodir,
@@ -148,12 +155,6 @@ GzOlH77KKeXAikTnTX5uDWHI31G39yf4R1rOqgMLBacSTj1+LNGMfxY=
     mock_entitlement_path => $mock_entitlement_path,
   }
 
-  if $deploy_git {
-    class { '::buildhost::git':
-      jenkins_ssh_pub_key => $jenkins_ssh_pub_key,
-      jenkins_user => $jenkins_user,
-    }
-  }
   if $deploy_demo {
     include buildhost::nexus
     class { '::buildhost::sonar':
