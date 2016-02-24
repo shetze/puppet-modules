@@ -7,17 +7,13 @@ class git::server (
   $package_ensure = 'installed',
 ){
 
-exec { "selinux_prepare_git":
-    require => [ Package["$git_package"], Package['policycoreutils-python'], File["$git_repobase"] ],
-    command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
-		semanage fcontext -a -e /var/www/git $git_repobase &&
-		restorecon -R $git_repobase",
-    unless => "ls -Zd $git_repobase/|grep -q git_content_t",
-    path => [ "/usr/bin/", "/usr/sbin/" ],
-}
-
 package { "$git_package":
     ensure => $package_ensure,
+}
+
+user { $gituser:
+    ensure => present,
+    purge_ssh_keys => false,
 }
 
 package { "httpd":
@@ -46,4 +42,21 @@ file { "$git_repobase":
     group => $git_group,
     mode => "700",
 }
+
+file { "$git_repodir/.ssh":
+    ensure => directory,
+    owner => $gituser,
+    group => $gitgroup,
+    mode => "700",
+}
+
+exec { "selinux_prepare_git":
+    require => [ Package["$git_package"], Package['policycoreutils-python'], File["$git_repobase"] ],
+    command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
+		semanage fcontext -a -e /var/www/git $git_repobase &&
+		restorecon -R $git_repobase",
+    unless => "ls -Zd $git_repobase/|grep -q git_content_t",
+    path => [ "/usr/bin/", "/usr/sbin/" ],
+}
+
 }
