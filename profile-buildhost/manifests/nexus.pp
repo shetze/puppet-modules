@@ -7,20 +7,24 @@ class buildhost::nexus {
     home    => '/opt/sonatype-nexus',
     comment => 'Sonatype Nexus Service'
   }
-  package { 'java-1.8.0-openjdk':
-    ensure => 'installed',
-  }
   package { 'nexus':
     ensure  => 'installed',
     require => [ User['nexus'], Package['java-1.8.0-openjdk'], ],
   }
-  file { '/opt/sonatype-nexus/conf/nexus.xml':
+  file { '/opt/sonatype-work/nexus/conf/':
+    ensure  => directory,
+    owner   => 'nexus',
+    group   => 'nexus',
+    mode    => '0755',
+    require => Package['nexus'],
+  }
+  file { '/opt/sonatype-work/nexus/conf/nexus.xml':
     ensure  => file,
     content => template('buildhost/nexus.xml.erb'),
     owner   => 'nexus',
     group   => 'nexus',
     mode    => '0644',
-    require => Package['nexus'],
+    require => File['/opt/sonatype-work/nexus/conf/'],
   }
   file { '/opt/sonatype-nexus/conf/nexus.env':
     ensure  => file,
