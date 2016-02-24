@@ -14,7 +14,7 @@ class buildhost::nexus {
     ensure  => 'installed',
     require => [ User['nexus'], Package['java-1.8.0-openjdk'], ],
   }
-  file { '/opt/sonatype-work/nexus/conf/nexus.xml':
+  file { '/opt/sonatype-nexus/conf/nexus.xml':
     ensure  => file,
     content => template('buildhost/nexus.xml.erb'),
     owner   => 'nexus',
@@ -22,7 +22,7 @@ class buildhost::nexus {
     mode    => '0644',
     require => Package['nexus'],
   }
-  file { '/opt/sonatype-work/nexus/conf/nexus.env':
+  file { '/opt/sonatype-nexus/conf/nexus.env':
     ensure  => file,
     content => template('buildhost/nexus.env.erb'),
     owner   => 'nexus',
