@@ -10,11 +10,11 @@ It uses the git module above, rtyler/jenkins and puppetlabs/postgresql to provid
 dockerhost provides a host profile for a container host that is used as staging infrastructure in the demo setup included in the buildhost module above.
 
 
-To bootstrap this infrastructure you first need to clone this repo, build the puppet modules, load them into the Satellite and create a Content View with the git and buildhost modules from this repo and camptocamp/archive, puppetlabs/concat, puppetlabs/java, rtyler/jenkins, puppetlabs/postgresql and puppetlabs/stdlib to resolve the dependencies.
+To bootstrap this infrastructure you first need to clone this repo, build the puppet modules, load them into the Satellite and create a Content View with the git and buildhost modules from this repo and [camptocamp/archive](https://forge.puppetlabs.com/camptocamp/archive), [puppetlabs/concat](https://forge.puppetlabs.com/puppetlabs/concat), [puppetlabs/java](https://forge.puppetlabs.com/puppetlabs/java), [rtyler/jenkins](https://forge.puppetlabs.com/rtyler/jenkins), [puppetlabs/postgresql](https://forge.puppetlabs.com/puppetlabs/postgresql), [cristifalcas/docker](https://forge.puppetlabs.com/cristifalcas/docker) and [puppetlabs/stdlib](https://forge.puppetlabs.com/puppetlabs/stdlib) to resolve the dependencies.
 
 A r10k control setup is provided for convenience to automate development of the git module and the buildhost profile.
 
-Futher you need EPEL, apache-maven and jenkins products synced into your Satellite. (The http://pkg.jenkins-ci.org/redhat-stable/ repo is quite large so I prefer to manually upload current packages into my Jenkins product.)
+Futher you need [EPEL](https://dl.fedoraproject.org/pub/epel/7/x86_64/), [apache-maven](https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-7/x86_64/) and [Jenkins](http://pkg.jenkins-ci.org/redhat-stable/) products synced into your Satellite. (The http://pkg.jenkins-ci.org/redhat-stable/ repo is quite large so I prefer to manually upload current packages into my Jenkins product.)
 Add these products / repos to your Content View and create a host using the buildhost puppet class.
 This leads to a basic build host capable to create puppet modules for smoke tests.
 
