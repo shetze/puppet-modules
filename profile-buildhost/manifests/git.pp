@@ -10,6 +10,9 @@ class buildhost::git (
   }
   git::server::createrepo { 'git': git_repo => 'module-git' }
   git::server::createrepo { 'buildhost': git_repo => 'profile-buildhost' }
+  git::server::createrepo { 'control': git_repo => 'control-buildhost' }
   git::server::createrepo { 'dockerhost': git_repo => 'profile-dockerhost' }
+  git::server::createrepo { 'packages': git_repo => 'buildhost-packages' }
+  git::server::createrepo { 'ticketmonster': git_repo => 'ticket-monster' }
 
 }
