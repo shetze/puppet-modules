@@ -4,16 +4,16 @@ cwd=$(pwd)
 tmpdir=$(mktemp -d)
 cd $tmpdir || exit -1
 
-git clone file://<%= @git_repobase %>/<%= @repo %>.git
-cd <%= @repo %>
+git clone file://<%= @git_repobase %>/<%= @git_repo %>.git
+cd <%= @git_repo %>
 
-for dir in *; do
+for dir in . *; do
   [ -d $dir ] || continue
-  cd $dir
+  pushd $dir
   [ -f metadata.json ] || continue
   puppet module build
   cp pkg/*.tar.gz /var/www/html/<%= @git_puppet_project %>
-  cd ..
+  popd
 done
 
 
