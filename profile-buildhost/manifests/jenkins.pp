@@ -1,6 +1,6 @@
 class buildhost::jenkins (
   $jenkins_ssh_priv_key = '',
-  $maven_package_ensure = true,
+  $maven_package_ensure = 'installed',
   $git_repobase = '/srv/git',
   $create_jenkins_repo = false,
   $deploy_demo = false,
