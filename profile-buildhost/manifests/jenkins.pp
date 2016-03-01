@@ -19,6 +19,7 @@ class buildhost::jenkins (
   $mock_rhel7_repos = '',
   $sonar_database_host = 'localhost',
 ) {
+  include stdlib
   include jenkins
   class{ '::jenkins': repo => $create_jenkins_repo }
   jenkins::plugin { 'scm-api': }
@@ -63,13 +64,7 @@ class buildhost::jenkins (
     mode    => '0600'
   }
 
-  package { 'java-1.8.0-openjdk-devel':
-    ensure => 'installed',
-  }
-
-  package { 'firewalld':
-    ensure => 'installed',
-  }
+  ensure_packages( ['firewalld','java-1.8.0-openjdk-devel','apache-maven',])
 
   exec { 'firewalld_prepare_jenkins':
     require => [ Package['firewalld'], ],
@@ -110,9 +105,6 @@ class buildhost::jenkins (
     }
   }
 
-  package { 'apache-maven':
-    ensure => $maven_package_ensure,
-  }
   file { '/var/lib/jenkins/hudson.tasks.Maven.xml':
     ensure  => file,
     content => template('buildhost/hudson.tasks.Maven.xml.erb'),

@@ -3,13 +3,9 @@ class buildhost::hammer (
   $hammer_passwd = 'akwBhTQ8uBytPcUs',
 ) {
 
-  package { 'rubygem-hammer_cli':
-    ensure => 'installed',
-  }
+  include stdlib
 
-  package { 'rubygem-hammer_cli_katello':
-    ensure => 'installed',
-  }
+  ensure_packages(['rubygem-hammer_cli_katello',])
 
   file { '/var/lib/jenkins/.hammer/':
     ensure => directory,
@@ -21,7 +17,7 @@ class buildhost::hammer (
     content => template('buildhost/hammer-cli_config.yml.erb'),
     group   => 'jenkins',
     mode    => '0600',
-    require => [ Package['rubygem-hammer_cli'],
+    require => [ Package['rubygem-hammer_cli_katello'],
       File['/var/lib/jenkins/.hammer/'], ],
   }
 }
