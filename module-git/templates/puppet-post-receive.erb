@@ -4,10 +4,10 @@
 repobase=<%= @git_repobase %>
 repo=<%= @git_repo %>
 pubdir=<%= @git_puppet_project %>
-organization=<%= @organization %>
-product=<%= @git_sync_product %>
-product_name=<%= @git_sync_repo %>
-cv=<%= @git_sync_cv %>
+organization="<%= @organization %>"
+product="<%= @git_sync_product %>"
+product_name="<%= @git_sync_repo %>"
+cv="<%= @git_sync_cv %>"
 env_1="Development"
 env_2="Quality Assurance"
 env_3="Integration"
@@ -57,7 +57,7 @@ promote_to_stage () {
     version=$1
     stage=$2
     case $stage in
-        master|devel)
+        devel)
 	    echo hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version}
 	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version} 2>/dev/null
 	    ;;
@@ -91,7 +91,7 @@ do
         library)
 	    sync_to_library
 	    ;;
-	master|devel|qa|integration|production)
+	devel|qa|integration|production)
 	    echo "sync and promote to stage $branch"
 	    sync_to_library
 	    promote_to_stage $version $branch
