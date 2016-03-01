@@ -1,29 +1,102 @@
 #!/usr/bin/env bash
 
+
+repobase=<%= @git_repobase %>
+repo=<%= @git_repo %>
+pubdir=<%= @git_puppet_project %>
+organization=<%= @organization %>
+product=<%= @git_sync_product %>
+product_name=<%= @git_sync_repo %>
+cv=<%= @git_sync_cv %>
+env_1="Development"
+env_2="Quality Assurance"
+env_3="Integration"
+env_4="Production"
+
 cwd=$(pwd)
-tmpdir=$(mktemp -d)
-cd $tmpdir || exit -1
 
-git clone file://<%= @git_repobase %>/<%= @git_repo %>.git
-cd <%= @git_repo %>
+renew_pulp_manifest () {
+    cwd=$(pwd)
+    cd /var/www/html/${pubdir}
 
-for dir in . *; do
-  [ -d $dir ] || continue
-  pushd $dir
-  [ -f metadata.json ] || continue
-  puppet module build
-  cp pkg/*.tar.gz /var/www/html/<%= @git_puppet_project %>
-  popd
-done
+    truncate -s 0 PULP_MANIFEST
 
+    for file in $(find . -iwholename "*.tar.gz")
+    do
+        echo $file, `sha256sum $file | awk '{print $1}'`,`stat -c '%s' $file`>>PULP_MANIFEST
+    done
+    cd $cwd
+}
 
-cd /var/www/html/<%= @git_puppet_project %>
+build_modules () {
+    tmpdir=$(mktemp -d)
+    cd $tmpdir || echo "tmpdir error" && return
 
-truncate -s 0 PULP_MANIFEST
+    git clone -b $1 file:///${repobase}/${repo}.git
+    cd ${repo}
+    for dir in . *; do
+        [ -d $dir ] || continue
+        pushd $dir
+        [ -f metadata.json ] || popd && continue
+        puppet module build
+        cp pkg/*.tar.gz /var/www/html/${pubdir}
+        popd
+    done
+}
 
-for file in $(find . -iwholename "*.tar.gz")
+sync_to_library () {
+    echo hammer repository synchronize --organization "${organization}" --product "${product}" --name "${product_name}"
+    /usr/bin/hammer repository synchronize --organization "${organization}" --product "${product}" --name "${product_name}" 2>/dev/null
+    echo hammer content-view publish --name "${cv}" --organization "${organization}" --description "git hook ${repo}"
+    /usr/bin/hammer content-view publish --name "${cv}" --organization "${organization}" --description "git hook ${repo}" 2>/dev/null
+    echo hammer content-view info --name "${cv}" --organization "${organization}"
+    version=$(/usr/bin/hammer content-view info --name "${cv}" --organization "${organization}" | grep "ID:" | tail -1 | tr -d ' ' | cut -f2 -d ':')
+}
+
+promote_to_stage () {
+    version=$1
+    stage=$2
+    case $stage in
+        master|devel)
+	    echo hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version}
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version} 2>/dev/null
+	    ;;
+        qa)
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version} 2>/dev/null
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_2}" --id ${version} 2>/dev/null
+	    ;;
+        integration)
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version} 2>/dev/null
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_2}" --id ${version} 2>/dev/null
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_3}" --id ${version} 2>/dev/null
+	    ;;
+        production)
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_1}" --id ${version} 2>/dev/null
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_2}" --id ${version} 2>/dev/null
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_3}" --id ${version} 2>/dev/null
+	    /usr/bin/hammer content-view version promote --content-view "${cv}" --organization "${organization}" --to-lifecycle-environment "${env_4}" --id ${version} 2>/dev/null
+	    ;;
+    esac
+
+}
+
+while read oldrev newrev refname
 do
-  echo $file, `sha256sum $file | awk '{print $1}'`,`stat -c '%s' $file`>>PULP_MANIFEST
+    echo "oldrev $oldrev newrev $newrev refname $refname"
+    cd /${repobase}/${repo}.git
+    branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+    build_modules $branch
+    renew_pulp_manifest
+    case $branch in
+        library)
+	    sync_to_library
+	    ;;
+	master|devel|qa|integration|production)
+	    echo "sync and promote to stage $branch"
+	    sync_to_library
+	    promote_to_stage $version $branch
+	    ;;
+    esac
 done
 
 cd $cwd
