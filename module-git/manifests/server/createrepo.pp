@@ -6,6 +6,9 @@ define git::server::createrepo (
   $git_package = 'git',
   $git_puppet_project = 'puppet-modules',
   $git_post_receive = undef,
+  $git_sync_product = 'LunetIX',
+  $git_sync_repo = 'LunetIX Puppet Modules',
+  $git_sync_cv = 'puppet-library',
 ){
   exec { "git_init_${git_repo}":
     command => "git init --bare ${git_repobase}/${git_repo}.git && chown -R ${git_user}:${git_group} ${git_repobase}/${git_repo}.git",
