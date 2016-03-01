@@ -1,0 +1,38 @@
+#! /bin/bash
+
+git_host=<%= @git_host %>
+
+cwd=$(pwd)
+
+# tmpdir=$(mktemp -d)
+tmpdir='/var/cache/github' && mkdir $tmpdir
+cd $tmpdir || exit -1
+
+git clone  https://github.com/shetze/puppet-modules.git
+cd puppet-modules
+for module in module-git profile-buildhost control-buildhost profile-dockerhost
+do
+  echo "splitting module $module from github.com/shetze/puppet-modules"
+  git subtree split --prefix=$module --annotate="($module split)" -b $module
+  git push git@${git_host}:${module}.git $module:master
+done
+
+for repo in buildhost-packages
+do
+  echo "mirroring repo $repo from github.com/shetze"
+  git clone --mirror https://github.com/shetze/${repo}.git
+  cd ${repo}.git
+  git remote set-url --push origin git@${git_host}:${repo}.git
+  git push --mirror
+  cd $tmpdir
+done
+
+echo "mirroring ticket-monster from github.com/tquarnst"
+git clone --mirror https://github.com/tqvarnst/ticket-monster.git
+cd ticket-monster.git
+git remote set-url --push origin git@${git_host}:ticket-monster.git
+git push --mirror
+
+
+cd $cwd
+# rm -fr $tmpdir
