@@ -7,26 +7,26 @@ class git::server (
   $package_ensure = 'installed',
 ){
 
-package { "$git_package":
-    ensure => $package_ensure,
-}
+include stdlib
+ensure_packages(["$git_package","httpd","policycoreutils-python",'firewalld',])
 
 user { $git_user:
     ensure => present,
     purge_ssh_keys => false,
 }
 
-package { "httpd":
-    ensure => $package_ensure,
-}
-
-package { "policycoreutils-python":
-    ensure => $package_ensure,
-}
-
 service { "httpd":
     ensure => "running",
     require => Package["httpd"],
+}
+
+
+exec { 'firewalld_prepare_httpd':
+    require => [ Package['firewalld'], ],
+    command => "firewall-cmd --permanent --add-port=80/tcp &&
+                firewall-cmd  --complete-reload",
+    unless  => 'firewall-cmd --list-all|grep -q 80',
+    path    => '/usr/bin/',
 }
 
 file { "/var/www/html/$git_puppet_project":
