@@ -7,29 +7,14 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>PUSH_USER</name>
-          <description>The username to use when pushing artefacts to the satellite. The build job will need to be able to ssh to the satellite as this user so you need to have keys set up.</description>
-          <defaultValue>jenkins</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>RSA_ID</name>
-          <description>RSA ID of the Jenkins user.</description>
-          <defaultValue>/var/lib/jenkins/.ssh/id_rsa</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>KNOWN_HOSTS</name>
-          <description>Known hosts file of the Jenkins user.</description>
-          <defaultValue>/var/lib/jenkins/.ssh/known_hosts</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
           <name>SATELLITE</name>
           <description>The FQDN of the Red Hat Satellite.</description>
-          <defaultValue><%= @foreman_url %></defaultValue>
+          <defaultValue><%= @puppetmaster %></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>ORG</name>
           <description>This is the name of the organisation you are using on the Red Hat Satellite.</description>
-          <defaultValue><%=  @rhsm_organization_label %></defaultValue>
+          <defaultValue><%=  @organization %></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>REPO_ID</name>
@@ -98,7 +83,7 @@ hammer lifecycle-environment list --organization &quot;Default_Organization&quot
         <configVersion>2</configVersion>
         <userRemoteConfigs>
           <hudson.plugins.git.UserRemoteConfig>
-            <url>git@<%= @ci_git_host %>:SOE.git</url>
+            <url>git@<%= @ci_git_host %>:buildhost-packages.git</url>
           </hudson.plugins.git.UserRemoteConfig>
         </userRemoteConfigs>
         <branches>
@@ -110,7 +95,7 @@ hammer lifecycle-environment list --organization &quot;Default_Organization&quot
         <submoduleCfg class="list"/>
         <extensions>
           <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
-            <relativeTargetDir>soe</relativeTargetDir>
+            <relativeTargetDir>mock</relativeTargetDir>
           </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
         </extensions>
       </hudson.plugins.git.GitSCM>
@@ -132,22 +117,13 @@ hammer lifecycle-environment list --organization &quot;Default_Organization&quot
       <command>echo &quot;#####################################################&quot;
 echo &quot;#                BUILDING RPMS                      #&quot;
 echo &quot;#####################################################&quot;
-/bin/bash -x ${WORKSPACE}/scripts/rpmbuild.sh ${WORKSPACE}/soe/rpms
-
-echo &quot;#####################################################&quot;
-echo &quot;#                BUILDING PUPPET MODULES            #&quot;
-echo &quot;#####################################################&quot;
-/bin/bash -x ${WORKSPACE}/scripts/puppetbuild.sh ${WORKSPACE}/soe/puppet</command>
+/bin/bash -x ${WORKSPACE}/scripts/rpmbuild.sh ${WORKSPACE}/mock</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>echo &quot;#####################################################&quot;
 echo &quot;#                PUSH RPMS TO SATELLITE             #&quot;
 echo &quot;#####################################################&quot;
 /bin/bash -x ${WORKSPACE}/scripts/rpmpush.sh ${WORKSPACE}/artefacts
-echo &quot;#####################################################&quot;
-echo &quot;#         PUSH PUPPET MODULES TO SATELLITE          #&quot;
-echo &quot;#####################################################&quot;
-/bin/bash -x ${WORKSPACE}/scripts/puppetpush.sh ${WORKSPACE}/artefacts
 echo &quot;#####################################################&quot;
 echo &quot;#           REPUBLISH CONTENT VIEW                  #&quot;
 echo &quot;#####################################################&quot;
