@@ -9,22 +9,27 @@
         <hudson.model.StringParameterDefinition>
           <name>SATELLITE</name>
           <description>The FQDN of the Red Hat Satellite.</description>
-          <defaultValue><%= @foreman_url %></defaultValue>
+          <defaultValue><%= @puppetmaster %></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>ORG</name>
           <description>This is the name of the organisation you are using on the Red Hat Satellite.</description>
-          <defaultValue><%=  @rhsm_organization_label %></defaultValue>
+          <defaultValue><%=  @organization %></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>REPO_ID</name>
-          <description>The numeric ID of the RPM repository on the Red Hat Satellite that you want to use for your custom RPMs.</description>
-          <defaultValue><%= @ci_yum_repo_id %></defaultValue>
+          <name>PRODUCT</name>
+          <description>The Product name of the RPM repository on the Red Hat Satellite that you want to use for your custom RPM and puppet packages.</description>
+          <defaultValue><%= @ci_custom_product %></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>PUPPET_REPO_ID</name>
-          <description>The numeric ID of the puppet module repository on the Red Hat Satellite that you want to use for your custom puppet modules.</description>
-          <defaultValue><%= @ci_puppet_repo_id %></defaultValue>
+          <name>YUM_REPO_NAME</name>
+          <description>The name of the yum module repository on the Red Hat Satellite that you want to use for your custom RPM packages.</description>
+          <defaultValue><%= @ci_yum_repo %></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PUPPET_REPO_NAME</name>
+          <description>The name of the puppet module repository on the Red Hat Satellite that you want to use for your custom puppet modules.</description>
+          <defaultValue><%= @ci_puppet_repo %></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>TESTVM_ENV</name>
@@ -42,7 +47,7 @@ hammer lifecycle-environment list --organization &quot;Default_Organization&quot
         <hudson.model.StringParameterDefinition>
           <name>PUPPET_REPO</name>
           <description>This is the location of the puppet repository on the Jenkins server used to export puppet modules to the satellite server.</description>
-          <defaultValue>/var/www/html/pub/puppet-modules</defaultValue>
+          <defaultValue>/var/www/html/puppet-modules</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CV</name>
@@ -58,7 +63,7 @@ hammer lifecycle-environment list --organization &quot;Default_Organization&quot
         <configVersion>2</configVersion>
         <userRemoteConfigs>
           <hudson.plugins.git.UserRemoteConfig>
-            <url>git@<%= @ci_git_host %>:CI.git</url>
+            <url>git@<%= @ci_git_host %>:buildhost-packages.git</url>
           </hudson.plugins.git.UserRemoteConfig>
         </userRemoteConfigs>
         <branches>
