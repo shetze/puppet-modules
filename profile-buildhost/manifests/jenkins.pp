@@ -15,8 +15,7 @@ class buildhost::jenkins (
   $ci_dockerhost_prod = 'bx-dh01.lunetix.org',
   $deploy_ci_pipeline = true,
   $mock_entitlement_path = '/etc/pki/entitlement',
-  $mock_rhel6_repos = '',
-  $mock_rhel7_repos = '',
+  $mock_extra_packages = '',
   $sonar_database_host = 'localhost',
 ) {
   include stdlib
