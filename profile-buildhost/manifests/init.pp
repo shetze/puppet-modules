@@ -40,10 +40,6 @@
 #
 # [*mock_entitlement_path*]
 #
-# [*mock_rhel6_repos*]
-#
-# [*mock_rhel7_repos*]
-#
 # [*sonar_database_host*]
 #
 # === Variables
@@ -89,8 +85,7 @@ class buildhost (
   $hammer_user = 'jenkins',
   $hammer_passwd = 'OhjahNg2',
   $mock_entitlement_path = '/etc/pki/entitlement',
-  $mock_rhel6_repos = '',
-  $mock_rhel7_repos = '',
+  $mock_extra_packages = '',
   $sonar_database_host = 'localhost',
   $jenkins_ssh_priv_key = "-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAuSeSfsa8b25oJTaVqLNe0q8tuex2FehByUT5fdB8Ee1k0FpN
@@ -150,8 +145,7 @@ GzOlH77KKeXAikTnTX5uDWHI31G39yf4R1rOqgMLBacSTj1+LNGMfxY=
     hammer_passwd => $hammer_passwd,
   }
   class { '::buildhost::mock':
-    mock_rhel6_repos      => $mock_rhel6_repos,
-    mock_rhel7_repos      => $mock_rhel7_repos,
+    mock_extra_packages   => $mock_extra_packages,
     mock_entitlement_path => $mock_entitlement_path,
   }
 
