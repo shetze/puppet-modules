@@ -4,8 +4,7 @@ git_host=<%= @git_host %>
 
 cwd=$(pwd)
 
-# tmpdir=$(mktemp -d)
-tmpdir='/var/cache/github' && mkdir $tmpdir
+tmpdir=$(mktemp -d)
 cd $tmpdir || exit -1
 
 git clone  https://github.com/shetze/puppet-modules.git
@@ -16,6 +15,7 @@ do
   git subtree split --prefix=$module --annotate="($module split)" -b $module
   git push git@${git_host}:${module}.git $module:master
 done
+cd $tmpdir
 
 for repo in buildhost-packages
 do
