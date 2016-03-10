@@ -1,5 +1,5 @@
 class buildhost::hammer (
-  $hammer_user = admin,
+  $hammer_user   = admin,
   $hammer_passwd = 'akwBhTQ8uBytPcUs',
 ) {
 

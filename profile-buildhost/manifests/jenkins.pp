@@ -1,22 +1,22 @@
 class buildhost::jenkins (
-  $jenkins_ssh_priv_key = '',
-  $maven_package_ensure = 'installed',
-  $git_repobase = '/srv/git',
-  $create_jenkins_repo = false,
-  $deploy_demo = false,
-  $ci_yum_repo_id = 160,
-  $ci_puppet_repo_id = 190,
-  $ci_target_env = 1,
-  $ci_content_view = 'bl-dev-rhel7',
-  $ci_template_instance = 'rhel7-baseline.lunetix.org',
-  $ci_git_host = 'bx-builder.lunetix.org',
-  $ci_build_host = 'bx-bld-dev01.lunetix.org',
-  $ci_dockerhost_test = 'bx-dh01.lunetix.org',
-  $ci_dockerhost_prod = 'bx-dh01.lunetix.org',
-  $deploy_ci_pipeline = true,
+  $jenkins_ssh_priv_key  = '',
+  $maven_package_ensure  = 'installed',
+  $git_repobase          = '/srv/git',
+  $create_jenkins_repo   = false,
+  $deploy_demo           = false,
+  $ci_yum_repo_id        = 160,
+  $ci_puppet_repo_id     = 190,
+  $ci_target_env         = 1,
+  $ci_content_view       = 'bl-dev-rhel7',
+  $ci_template_instance  = 'rhel7-baseline.lunetix.org',
+  $ci_git_host           = 'bx-builder.lunetix.org',
+  $ci_build_host         = 'bx-bld-dev01.lunetix.org',
+  $ci_dockerhost_test    = 'bx-dh01.lunetix.org',
+  $ci_dockerhost_prod    = 'bx-dh01.lunetix.org',
+  $deploy_ci_pipeline    = true,
   $mock_entitlement_path = '/etc/pki/entitlement',
-  $mock_extra_packages = '',
-  $sonar_database_host = 'localhost',
+  $mock_extra_packages   = '',
+  $sonar_database_host   = 'localhost',
 ) {
   include stdlib
   include jenkins
@@ -33,7 +33,7 @@ class buildhost::jenkins (
   jenkins::plugin { 'sonar': }
 
   file { '/var/lib/jenkins/.ssh/':
-    ensure => directory,
+    ensure  => directory,
     owner   => jenkins,
     group   => jenkins,
     mode    => '0700',

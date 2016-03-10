@@ -1,5 +1,5 @@
 class git::client (
-  $gitpackage = 'git',
+  $gitpackage     = 'git',
   $package_ensure = 'installed',
 ){
   package { "$gitpackage":

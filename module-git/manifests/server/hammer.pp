@@ -1,7 +1,7 @@
 define git::server::hammer (
-  $hammer_user = 'admin',
+  $hammer_user   = 'admin',
   $hammer_passwd = 'akwBhTQ8uBytPcUs',
-  $git_repobase =  '/srv/git'
+  $git_repobase  = '/srv/git'
 ) {
 
   ensure_packages(['rubygem-hammer_cli_katello',])
