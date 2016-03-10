@@ -20,7 +20,10 @@ class buildhost::jenkins (
 ) {
   include stdlib
   include jenkins
-  class{ '::jenkins': repo => $create_jenkins_repo }
+  class{ '::jenkins': 
+    repo               => $create_jenkins_repo,
+    configure_firewall => false,
+  }
   jenkins::plugin { 'scm-api': }
   jenkins::plugin { 'git-client': }
   jenkins::plugin { 'git': }
