@@ -37,13 +37,13 @@
 #
 class dockerhost (
   $listen_address = '0.0.0.0',
-  $listen_port = '2375',
-  $registries = [ 'registry.access.redhat.com', ],
+  $listen_port    = '2375',
+  $registries     = [ 'registry.access.redhat.com', ],
 
 ){
 
 class { 'docker':
-  bind_to => "tcp://$listen_address:$listen_port",
+  bind_to      => "tcp://$listen_address:$listen_port",
   add_registry => $registries,
 }
 
@@ -55,8 +55,8 @@ exec { "firewalld_prepare_docker":
     require => [ Package["firewalld"], ],
     command => "firewall-cmd --permanent --add-port=$listen_port/tcp &&
                 firewall-cmd  --complete-reload",
-    unless => "firewall-cmd --list-all|grep -q $listen_port",
-    path => "/usr/bin/",
+    unless  => "firewall-cmd --list-all|grep -q $listen_port",
+    path    => "/usr/bin/",
 }
 
 }

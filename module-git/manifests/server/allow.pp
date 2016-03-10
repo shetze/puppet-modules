@@ -1,8 +1,8 @@
 define git::server::allow (
-  $allow_user = undef,
-  $public_key = undef,
-  $git_repobase =  '/srv/git',
-  $git_user = 'git',
+  $allow_user   = undef,
+  $public_key   = undef,
+  $git_repobase = '/srv/git',
+  $git_user     = 'git',
 ){
 
 ssh_authorized_key { "${allow_user}":

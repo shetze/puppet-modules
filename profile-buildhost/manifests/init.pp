@@ -68,26 +68,26 @@
 # Copyright 2016 Sebastian Hetze
 #
 class buildhost (
-  $ci_build_host = 'localhost',
-  $ci_git_host = 'bx-bld-dev01.lunetix.org',
-  $ci_dockerhost_test = 'bx-dh01.lunetix.org',
-  $ci_dockerhost_prod = 'bx-dh01.lunetix.org',
-  $ci_yum_repo_id = 160,
-  $ci_puppet_repo_id = 190,
-  $ci_template_instance = 'rhel7-baseline.lunetix.org',
-  $ci_target_env = 1,
-  $ci_content_view = 'bl-dev-rhel7',
-  $deploy_ci_pipeline = true,
-  $deploy_demo = true,
-  $deploy_git = true,
-  $git_repobase = '/srv/git',
-  $create_jenkins_repo = false,
-  $hammer_user = 'jenkins',
-  $hammer_passwd = 'OhjahNg2',
+  $ci_build_host         = 'localhost',
+  $ci_git_host           = 'bx-bld-dev01.lunetix.org',
+  $ci_dockerhost_test    = 'bx-dh01.lunetix.org',
+  $ci_dockerhost_prod    = 'bx-dh01.lunetix.org',
+  $ci_yum_repo_id        = 160,
+  $ci_puppet_repo_id     = 190,
+  $ci_template_instance  = 'rhel7-baseline.lunetix.org',
+  $ci_target_env         = 1,
+  $ci_content_view       = 'bl-dev-rhel7',
+  $deploy_ci_pipeline    = true,
+  $deploy_demo           = true,
+  $deploy_git            = true,
+  $git_repobase          = '/srv/git',
+  $create_jenkins_repo   = false,
+  $hammer_user           = 'jenkins',
+  $hammer_passwd         = 'OhjahNg2',
   $mock_entitlement_path = '/etc/pki/entitlement',
-  $mock_extra_packages = '',
-  $sonar_database_host = 'localhost',
-  $jenkins_ssh_priv_key = "-----BEGIN RSA PRIVATE KEY-----
+  $mock_extra_packages   = '',
+  $sonar_database_host   = 'localhost',
+  $jenkins_ssh_priv_key  = "-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAuSeSfsa8b25oJTaVqLNe0q8tuex2FehByUT5fdB8Ee1k0FpN
 Pg2OyRJAyyakPlcPyQr8ubYMiAwl+G573sK/i5f8UElFTXIARXjsRGXkjrtx2Lct
 hnmMPZpe4X59sFCYTSxZonUgpevGirEnFbKIQtFP7I/kT035E9pFkzifWS8zeZQX
@@ -114,15 +114,15 @@ nnI8iJUCgYEAwlXiwXzpiQgCylqql8bfK7Wm/sJbUnspNyCl55RqWWOEwAxAVxf7
 bL9/83AoUGJ6X8vz2yyIjdNBQzmZ3oeeZPClsNi/z1j8YqAsV+NGzc4RRUVr5Nte
 GzOlH77KKeXAikTnTX5uDWHI31G39yf4R1rOqgMLBacSTj1+LNGMfxY=
 -----END RSA PRIVATE KEY-----",
-  $jenkins_ssh_pub_key = 'AAAAB3NzaC1yc2EAAAADAQABAAABAQC5J5J+xrxvbmglNpWos17Sry257HYV6EHJRPl90HwR7WTQWk0+DY7JEkDLJqQ+Vw/JCvy5tgyIDCX4bnvewr+Ll/xQSUVNcgBFeOxEZeSOu3HYty2GeYw9ml7hfn2wUJhNLFmidSCl68aKsScVsohC0U/sj+RPTfkT2kWTOJ9ZLzN5lBfWaGbghSJoOiMgrE1FaGz/8YnwLxF7e09R+zwgrG9LkPu2FbuUNxdDAWIiVY1Ct1YmNU41+6EpT6VGqqnmsPnZCHZrLTa/X/b7JvDM81AEJMYSYs8fRBc7+OcS5FBwu5X5mtwPg1Tb0C2dXhCUSGex3QRlg2t8MuzEW9K9',
+  $jenkins_ssh_pub_key   = 'AAAAB3NzaC1yc2EAAAADAQABAAABAQC5J5J+xrxvbmglNpWos17Sry257HYV6EHJRPl90HwR7WTQWk0+DY7JEkDLJqQ+Vw/JCvy5tgyIDCX4bnvewr+Ll/xQSUVNcgBFeOxEZeSOu3HYty2GeYw9ml7hfn2wUJhNLFmidSCl68aKsScVsohC0U/sj+RPTfkT2kWTOJ9ZLzN5lBfWaGbghSJoOiMgrE1FaGz/8YnwLxF7e09R+zwgrG9LkPu2FbuUNxdDAWIiVY1Ct1YmNU41+6EpT6VGqqnmsPnZCHZrLTa/X/b7JvDM81AEJMYSYs8fRBc7+OcS5FBwu5X5mtwPg1Tb0C2dXhCUSGex3QRlg2t8MuzEW9K9',
   $jenkins_user = 'jenkins',
-  $maven_package_ensure = true,
+  $maven_package_ensure  = true,
 ) {
 
   if $deploy_git {
     class { '::buildhost::git':
       jenkins_ssh_pub_key => $jenkins_ssh_pub_key,
-      jenkins_user => $jenkins_user,
+      jenkins_user        => $jenkins_user,
     }
   }
 
