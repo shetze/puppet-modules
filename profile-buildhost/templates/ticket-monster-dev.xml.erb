@@ -19,7 +19,7 @@
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>**</name>
+        <name>*/2.7.0.Final-with-tutorials</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -41,6 +41,7 @@
     <groupId>org.jboss.examples</groupId>
     <artifactId>ticket-monster</artifactId>
   </rootModule>
+  <rootPOM>demo/pom.xml</rootPOM>
   <goals>clean package</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
