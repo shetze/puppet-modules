@@ -25,7 +25,7 @@ exec { 'firewalld_prepare_httpd':
     require => [ Package['firewalld'], ],
     command => "firewall-cmd --permanent --add-port=80/tcp &&
                 firewall-cmd  --complete-reload",
-    unless  => 'firewall-cmd --list-all|grep -q 80',
+    unless  => 'firewall-cmd --list-all|grep -q [[:space:]]80[[:space:]]',
     path    => '/usr/bin/',
 }
 
