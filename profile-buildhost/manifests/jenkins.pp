@@ -4,6 +4,7 @@ class buildhost::jenkins (
   $git_repobase          = '/srv/git',
   $create_jenkins_repo   = false,
   $deploy_demo           = false,
+  $deploy_baseline       = false,
   $ci_yum_repo_id        = 160,
   $ci_puppet_repo_id     = 190,
   $ci_target_env         = 1,
@@ -76,20 +77,17 @@ class buildhost::jenkins (
     path    => '/usr/bin/',
   }
 
-  jenkins::job { 'baseline-template':
-    config => template('buildhost/baseline-template.xml.erb'),
-  }
-  jenkins::job { 'puppet-modules-dev':
-    config => template('buildhost/puppet-modules-dev.xml.erb'),
-  }
-  jenkins::job { 'puppet-modules-prod':
-    config => template('buildhost/puppet-modules-prod.xml.erb'),
-  }
-  jenkins::job { 'baseline-packages-dev':
-    config => template('buildhost/baseline-packages-dev.xml.erb'),
-  }
-  jenkins::job { 'baseline-packages-prod':
-    config => template('buildhost/baseline-packages-prod.xml.erb'),
+  if $deploy_baseline {
+    jenkins::job { 'baseline-template':
+      config => template('buildhost/baseline-template.xml.erb'),
+    }
+    jenkins::job { 'baseline-packages-dev':
+      config => template('buildhost/baseline-packages-dev.xml.erb'),
+    }
+    jenkins::job { 'baseline-packages-prod':
+      config => template('buildhost/baseline-packages-prod.xml.erb'),
+    }
+    ensure_packages( ['jenkins-helper',])
   }
 
   if $deploy_demo {
