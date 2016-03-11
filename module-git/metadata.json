@@ -1,6 +1,6 @@
 {
   "name": "LunetIX/git",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": "Sebastian Hetze <shetze@redhat.com>",
   "summary": "Manage git server and client.",
   "license": "Apache 2.0",
