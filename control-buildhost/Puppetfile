@@ -5,7 +5,7 @@ mod 'dockerhost', :git => 'git@bx-builder.lunetix.org:profile-dockerhost'
 mod 'git', :git => 'git@bx-builder.lunetix.org:module-git'
 
 mod 'puppetlabs/stdlib'
-mod 'puppetlabs/postgresql'
+mod 'puppetlabs/postgresql', '4.6.1'
 mod 'puppetlabs/concat'
 mod 'puppetlabs/apache'
 mod 'rtyler/jenkins', '1.6.1'
