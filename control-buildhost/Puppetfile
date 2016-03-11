@@ -1,7 +1,8 @@
-forge 'bx-bld-dev01.lunetix.org/puppet-modules'
+forge 'bx-builder.lunetix.org/puppet-modules'
 
-mod 'buildhost', :git => 'git@bx-bld-dev01.lunetix.org:profile-buildhost'
-mod 'git', :git => 'git@bx-bld-dev01.lunetix.org:module-git'
+mod 'buildhost', :git => 'git@bx-builder.lunetix.org:profile-buildhost'
+mod 'buildhost', :git => 'git@bx-builder.lunetix.org:profile-dockerhost'
+mod 'git', :git => 'git@bx-builder.lunetix.org:module-git'
 
 mod 'puppetlabs/stdlib'
 mod 'puppetlabs/postgresql'
