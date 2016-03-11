@@ -11,5 +11,6 @@ ssh_authorized_key { "${allow_user}":
     type    => 'rsa',
     ensure  => present,
     key     => "$public_key",
+    require =>  File["$git_repobase/.ssh"],
 }
 }

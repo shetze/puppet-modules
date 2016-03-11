@@ -57,7 +57,7 @@ class buildhost::jenkins (
     command => "/usr/bin/ssh-keyscan -t rsa ${ci_git_host} >> /var/lib/jenkins/.ssh/known_hosts",
     unless  => "grep -q ${ci_git_host} /var/lib/jenkins/.ssh/known_hosts",
     path    => [ '/usr/bin/', '/usr/sbin/' ],
-    require => Package['jenkins'],
+    require => [ Package['jenkins'], File['/var/lib/jenkins/.ssh/'] ],
   }
 
   file { '/var/lib/jenkins/.ssh/known_hosts':

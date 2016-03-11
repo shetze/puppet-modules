@@ -44,10 +44,11 @@ file { "$git_repobase":
 }
 
 file { "$git_repobase/.ssh":
-    ensure => directory,
-    owner  => $git_user,
-    group  => $git_group,
-    mode   => "700",
+    ensure  => directory,
+    owner   => $git_user,
+    group   => $git_group,
+    mode    => "700",
+    require =>  File["$git_repobase"],
 }
 
 exec { "selinux_prepare_git":
