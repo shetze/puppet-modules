@@ -52,7 +52,8 @@ file { "$git_repobase/.ssh":
 }
 
 exec { 'selinux_prepare_git':
-    command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
+    command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh' &&
+                semanage fcontext -a -t var_t '/var/www/git/.hammer' &&
 		semanage fcontext -a -e /var/www/git $git_repobase &&
 		restorecon -R $git_repobase || true",
     unless  => "ls -Zd $git_repobase/|grep -q git_content_t",
