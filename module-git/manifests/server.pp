@@ -37,10 +37,11 @@ file { "/var/www/html/$git_puppet_project":
 }
 
 file { "$git_repobase":
-    ensure => directory,
-    owner  => $git_user,
-    group  => $git_group,
-    mode   => "700",
+    ensure  => directory,
+    owner   => $git_user,
+    group   => $git_group,
+    seltype => 'git_content_t',
+    mode    => '700',
 }
 
 file { "$git_repobase/.ssh":
@@ -48,12 +49,12 @@ file { "$git_repobase/.ssh":
     owner   => $git_user,
     group   => $git_group,
     mode    => "700",
+    seltype => 'ssh_home_t',
     require =>  [ File["$git_repobase"], Exec['selinux_prepare_git'] ],
 }
 
 exec { 'selinux_prepare_git':
-    command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh' &&
-                semanage fcontext -a -t var_t '/var/www/git/.hammer' &&
+    command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
 		semanage fcontext -a -e /var/www/git $git_repobase &&
 		restorecon -R $git_repobase || true",
     unless  => "ls -Zd $git_repobase/|grep -q git_content_t",

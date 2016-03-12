@@ -7,10 +7,11 @@ define git::server::hammer (
   ensure_packages(['rubygem-hammer_cli_katello',])
 
   file { "${git_repobase}/.hammer/":
-    ensure => directory,
-    owner  => 'git',
-    group  => 'git',
-    mode   => '0700',
+    ensure  => directory,
+    owner   => 'git',
+    group   => 'git',
+    seltype => 'user_home_t',
+    mode    => '0700',
   }
 
   file { "${git_repobase}/.hammer/cli_config.yml":
@@ -19,6 +20,7 @@ define git::server::hammer (
     owner   => 'git',
     group   => 'git',
     mode    => '0600',
+    seltype => 'user_home_t',
     require => [ Package['rubygem-hammer_cli_katello'],
       File["${git_repobase}/.hammer/"], ],
   }
