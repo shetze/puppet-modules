@@ -53,6 +53,15 @@ file { "$git_repobase/.ssh":
     require =>  [ File["$git_repobase"], Exec['selinux_prepare_git'] ],
 }
 
+file { "$git_repobase/.ssh/authorized_keys":
+    ensure  => file,
+    owner   => $git_user,
+    group   => $git_group,
+    mode    => "600",
+    seltype => 'ssh_home_t',
+    require =>  [ File["$git_repobase/.ssh"] ],
+}
+
 exec { 'selinux_prepare_git':
     command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh' &&
                 semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
@@ -60,7 +69,7 @@ exec { 'selinux_prepare_git':
                 semanage fcontext -a -t user_home_t '/var/www/git/.hammer/cli_config.yml' &&
 		semanage fcontext -a -e /var/www/git $git_repobase &&
 		restorecon -R $git_repobase",
-    unless  => "ls -Zd $git_repobase/|grep -q git_content_t",
+    unless  => "ls -Zd $git_repobase|grep -q git_content_t",
     path    => [ "/usr/bin/", "/usr/sbin/" ],
     require => [ Package["$git_package"], Package['policycoreutils-python'], File["$git_repobase"] ],
 }
