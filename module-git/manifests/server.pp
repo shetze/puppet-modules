@@ -15,9 +15,9 @@ user { $git_user:
     purge_ssh_keys => false,
 }
 
-service { "httpd":
-    ensure  => "running",
-    require => Package["httpd"],
+service { 'httpd':
+    ensure  => 'running',
+    require => Package['httpd'],
 }
 
 
@@ -25,7 +25,7 @@ exec { 'firewalld_prepare_httpd':
     require => [ Package['firewalld'], ],
     command => "firewall-cmd --permanent --add-port=80/tcp &&
                 firewall-cmd  --complete-reload",
-    unless  => 'firewall-cmd --list-all|grep -q [[:space:]]80[[:space:]]',
+    unless  => 'firewall-cmd --list-all|grep -q [[:space:]]80/',
     path    => '/usr/bin/',
 }
 
@@ -48,10 +48,10 @@ file { "$git_repobase/.ssh":
     owner   => $git_user,
     group   => $git_group,
     mode    => "700",
-    require =>  File["$git_repobase"],
+    require =>  [ File["$git_repobase"], Exec['selinux_prepare_git'] ],
 }
 
-exec { "selinux_prepare_git":
+exec { 'selinux_prepare_git':
     command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
 		semanage fcontext -a -e /var/www/git $git_repobase &&
 		restorecon -R $git_repobase",
