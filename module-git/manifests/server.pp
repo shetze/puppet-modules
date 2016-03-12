@@ -54,7 +54,7 @@ file { "$git_repobase/.ssh":
 exec { 'selinux_prepare_git':
     command => "semanage fcontext -a -t ssh_home_t '/var/www/git/.ssh/authorized_keys' &&
 		semanage fcontext -a -e /var/www/git $git_repobase &&
-		restorecon -R $git_repobase",
+		restorecon -R $git_repobase || true",
     unless  => "ls -Zd $git_repobase/|grep -q git_content_t",
     path    => [ "/usr/bin/", "/usr/sbin/" ],
     require => [ Package["$git_package"], Package['policycoreutils-python'], File["$git_repobase"] ],
