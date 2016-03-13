@@ -49,12 +49,12 @@ class { 'docker':
 
 ensure_packages( ['firewalld',] )
 
-file { '/root/Docker/jdk'
+file { '/root/Docker/jdk':
     ensure  => directory,
     mode    => '770',
 }
 
-file { '/root/Docker/eap'
+file { '/root/Docker/eap':
     ensure  => directory,
     mode    => '770',
 }
@@ -62,21 +62,21 @@ file { '/root/Docker/eap'
 file { '/root/Docker/jdk/Dockerfile':
     ensure  => file,
     mode    => "644",
-    content => file('Dockerfile.jdk'),
+    content => template('dockerhost/Dockerfile-jdk.erb'),
     require =>  [ File["/root/Docker/jdk"] ],
 }
 
 file { '/root/Docker/eap/Dockerfile':
     ensure  => file,
     mode    => "644",
-    content => file('Dockerfile.eap'),
+    content => template('dockerhost/Dockerfile-eap.erb'),
     require =>  [ File["/root/Docker/eap"] ],
 }
 
 file { '/root/Docker/eap/eapconfig.pp':
     ensure  => file,
     mode    => "644",
-    content => file('eapconfig.pp'),
+    content => template('dockerhost/eapconfig.erb'),
     require =>  [ File["/root/Docker/eap"] ],
 }
 
