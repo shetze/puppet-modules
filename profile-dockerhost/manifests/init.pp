@@ -57,11 +57,13 @@ file { '/root/Docker':
 file { '/root/Docker/jdk':
     ensure  => directory,
     mode    => '770',
+    require =>  [ File["/root/Docker"] ],
 }
 
 file { '/root/Docker/eap':
     ensure  => directory,
     mode    => '770',
+    require =>  [ File["/root/Docker"] ],
 }
 
 file { '/root/Docker/jdk/Dockerfile':
