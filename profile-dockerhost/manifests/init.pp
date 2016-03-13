@@ -49,6 +49,11 @@ class { 'docker':
 
 ensure_packages( ['firewalld',] )
 
+file { '/root/Docker':
+    ensure  => directory,
+    mode    => '770',
+}
+
 file { '/root/Docker/jdk':
     ensure  => directory,
     mode    => '770',
