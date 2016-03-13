@@ -30,14 +30,14 @@ renew_pulp_manifest () {
 
 build_modules () {
     tmpdir=$(mktemp -d)
-    cd $tmpdir || echo "tmpdir error" && return
+    cd $tmpdir || { echo "tmpdir error"; return; }
 
     git clone -b $1 file:///${repobase}/${repo}.git
     cd ${repo}
     for dir in . *; do
         [ -d $dir ] || continue
         pushd $dir
-        [ -f metadata.json ] || popd && continue
+        [ -f metadata.json ] || { popd;  continue; }
         puppet module build
         cp pkg/*.tar.gz /var/www/html/${pubdir}
         popd
