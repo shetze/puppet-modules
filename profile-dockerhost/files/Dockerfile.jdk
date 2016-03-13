@@ -1,0 +1,22 @@
+# DOCKER-VERSION 1.7.1
+FROM    rhel7
+
+MAINTAINER shetze <shetze@redhat.com>
+
+# Update the system
+# RUN yum -y update;yum clean all
+
+##########################################################
+# Install jdk plus some network stuff
+##########################################################
+USER root
+RUN yum -y update;\
+  yum -y install unzip java-1.8.0-openjdk java-1.8.0-openjdk-devel openssl iproute iputils;\
+  yum-config-manager --enable rhel-7-server-satellite-tools-6.1-rpms;\
+  yum -y install puppet;\
+  yum clean all;
+
+ENV JAVA_HOME /usr/lib/jvm/jre
+
+# Build command -> docker -H tcp://localhost:2375 build --rm -t jdk .
+# run command -> docker -H tcp://localhost:2375 run -p 49160:8080 -p 49170:9990 -d jdk

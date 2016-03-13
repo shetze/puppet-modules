@@ -1,0 +1,59 @@
+#######################################################################
+#                                                                     #
+# Creates a base RHEL7.1 image with JBoss EAP 6.4                     #
+#                                                                     #
+#######################################################################
+FROM    jdk
+
+MAINTAINER Sebastian Hetze <shetze@redhat.com>
+
+
+# Make sure JAVA_HOME is set
+ENV JAVA_HOME /usr/lib/jvm/jre
+
+USER root
+
+# Set root password
+RUN echo "root:redhat" | /usr/sbin/chpasswd
+
+# Update and prepare base system
+RUN yum-config-manager --enable jb-eap-6.4-for-rhel-7-server-rpms;
+
+RUN useradd -m -d /home/jbosseap -p jbosseap jbosseap
+#######################################################################
+# Install JBoss EAP                                                   #
+#######################################################################
+USER jbosseap
+
+ENV HOME /home/jbosseap
+RUN mkdir $HOME/eap && \
+ mkdir $HOME/tmp && \
+ mkdir $HOME/puppet
+
+COPY eapconfig.pp $HOME/puppet/
+ADD . $HOME/tmp/
+
+RUN /usr/bin/unzip -q $HOME/tmp/jboss-eap-6.4.*.zip -d $HOME/eap
+
+ENV JBOSS_HOME $HOME/eap/jboss-eap-6.4
+
+RUN $JBOSS_HOME/bin/add-user.sh -g admin -u admin -p admin-123 -s
+
+#######################################################################
+# Tune / configure JBoss Server using Puppet                          #
+#######################################################################
+USER root
+RUN puppet apply $HOME/puppet/eapconfig.pp
+
+#######################################################################
+# Clean up                                                            #
+#######################################################################
+RUN rm $HOME/tmp/*
+
+USER jbosseap
+CMD $HOME/eap/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
+
+EXPOSE 8080 9990 9999
+
+# Build command -> docker -H tcp://localhost:2375 build --rm -t eap .
+# run command -> docker -H tcp://localhost:2375 run -p 49160:8080 -p 49170:9990 -d eap
