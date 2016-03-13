@@ -24,7 +24,7 @@
 # === Examples
 #
 #  class { dockerhost:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
+#    listen_address => '192.168.1.15',
 #  }
 #
 # === Authors
@@ -47,8 +47,37 @@ class { 'docker':
   add_registry => $registries,
 }
 
-package { 'firewalld':
-  ensure => 'installed',
+ensure_packages( ['firewalld',] )
+
+file { '/root/Docker/jdk'
+    ensure  => directory,
+    mode    => '770',
+}
+
+file { '/root/Docker/eap'
+    ensure  => directory,
+    mode    => '770',
+}
+
+file { '/root/Docker/jdk/Dockerfile':
+    ensure  => file,
+    mode    => "644",
+    content => file('Dockerfile.jdk'),
+    require =>  [ File["/root/Docker/jdk"] ],
+}
+
+file { '/root/Docker/eap/Dockerfile':
+    ensure  => file,
+    mode    => "644",
+    content => file('Dockerfile.eap'),
+    require =>  [ File["/root/Docker/eap"] ],
+}
+
+file { '/root/Docker/eap/eapconfig.pp':
+    ensure  => file,
+    mode    => "644",
+    content => file('eapconfig.pp'),
+    require =>  [ File["/root/Docker/eap"] ],
 }
 
 exec { "firewalld_prepare_docker":
