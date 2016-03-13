@@ -21,8 +21,15 @@ rm -rf *
 # download deployment
 curl -o ticket-monster.war &quot;http://<%= @ci_build_host %>:8081/nexus/service/local/artifact/maven/content?g=org.jboss.examples&amp;a=ticket-monster&amp;v=LATEST&amp;r=snapshots&amp;e=war&quot;
 
-# download puppet config
-curl -o appconfig.pp &quot;http://<%= @ci_build_host %>:8081/nexus/service/local/artifact/maven/content?g=org.jboss.examples&amp;a=ticket-monster&amp;v=LATEST&amp;r=snapshots&amp;e=puppet&quot;
+# create puppet config
+cat &gt;appconfig.pp &lt;&lt;EOF
+file { '/tmp/sample':
+  ensure  => file,
+  content => 'sample file managed by puppet',
+  owner   => 'jbosseap',
+  mode    => '0644',
+}
+EOF
 
 # create Dockerfile
 cat &gt;Dockerfile &lt;&lt;EOF
@@ -32,11 +39,12 @@ USER root
 RUN yum-config-manager --enable rhel-7-server-satellite-tools-6.1-rpms; yum -y install puppet procps-ng less
 
 USER jbosseap
+ENV HOME /home/jbosseap
 ADD ticket-monster.war /usr/share/jbossas/standalone/deployments/ticket-monster.war
-ADD appconfig.pp /tmp/appconfig.pp
+ADD appconfig.pp $HOME/puppet/appconfig.pp
 
 USER root
-RUN puppet apply /tmp/appconfig.pp
+RUN puppet apply $HOME/puppet/appconfig.pp
 EOF
 
 # pack docker image definition
