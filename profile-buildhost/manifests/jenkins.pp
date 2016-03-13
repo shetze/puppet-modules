@@ -67,7 +67,7 @@ class buildhost::jenkins (
     mode    => '0600'
   }
 
-  ensure_packages( ['firewalld','java-1.8.0-openjdk-devel','apache-maven',])
+  ensure_packages( ['firewalld','java-1.8.0-openjdk-devel','apache-maven', 'jq'])
 
   exec { 'firewalld_prepare_jenkins':
     require => [ Package['firewalld'], ],
