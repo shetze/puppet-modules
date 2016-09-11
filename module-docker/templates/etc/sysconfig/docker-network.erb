@@ -1,0 +1,9 @@
+# /etc/sysconfig/docker-network
+# This file is managed by Puppet and local changes may be overwritten
+
+DOCKER_NETWORK_OPTIONS="<% -%>
+<% if @bridge %> --bridge=<%= @bridge %><% end -%>
+<% if !@iptables.nil? %> --iptables=<%= @iptables %><% end -%>
+<% if !@ip_masq.nil? %> --ip-masq=<%= @ip_masq %><% end -%>
+<% if @network_extra_parameters %><% @network_extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
+"
