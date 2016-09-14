@@ -1,6 +1,6 @@
 {
   "name": "LunetIX-docker",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "author": "Sebastian Hetze, based on work from Cristian Falcas",
   "summary": "Module for installing and managing docker",
   "license": "Apache-2.0",
