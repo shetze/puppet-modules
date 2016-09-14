@@ -23,6 +23,7 @@ class docker::params {
   $extra_parameters = undef
   # storage options
   $storage_driver = undef
+  $dm_auto_storage_setup = false
   $dm_basesize = undef
   $dm_fs = undef
   $dm_mkfsarg = undef
@@ -32,6 +33,7 @@ class docker::params {
   $dm_loopmetadatasize = undef
   $dm_thinpooldev = undef
   $dm_use_deferred_removal = undef
+  $dm_use_deferred_deletion = undef
   # network options
   $bridge = undef
   $iptables = undef
