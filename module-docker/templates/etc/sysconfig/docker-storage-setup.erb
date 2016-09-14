@@ -3,4 +3,4 @@
 #
 # For more details refer to "man docker-storage-setup"
 
-STORAGE_DRIVER=""
+STORAGE_DRIVER="<% if @storage_driver %><%= @storage_driver -%><% end -%>"
