@@ -78,6 +78,10 @@
 #   Default is undef: let docker choose the correct one
 #   Valid values: aufs, devicemapper, btrfs, overlayfs, vfs
 #
+# [*dm_auto_storage_setup*]
+#   docker-storage-setup can create a devicemapper pool automatically. If you use this option, all other dm_*
+#   options are ignored and the docker-storage configuration is created once by the docker-storage-setup.
+#
 # [*dm_basesize*]
 #   The size to use when creating the base device, which limits the size of images and containers.
 #   Default value is 10G
@@ -107,6 +111,13 @@
 #
 # [*dm_thinpooldev*]
 #   Specifies a custom block storage device to use for the thin pool.
+#
+# [*dm_use_deferred_deletion*]
+#   By default, thin pool device deletion is synchronous. This option allows use of deferred device deletion for such
+#   devices.
+#   Before a container is deleted, the Docker daemon removes any associated devices. If the storage driver can not
+#   remove a device, the container deletion fails and daemon returns an error.
+#   To avoid this failure, enable both deferred device deletion and deferred device removal on the daemon.
 #
 # [*dm_use_deferred_removal*]
 #   If device backing image/container is busy, then docker will not wait for all device refcounts to be dropped.
@@ -149,6 +160,7 @@ class docker(
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
   $storage_driver              = $docker::params::storage_driver,
+  $dm_auto_storage_setup       = $docker::params::dm_auto_storage_setup,
   $dm_basesize                 = $docker::params::dm_basesize,
   $dm_fs                       = $docker::params::dm_fs,
   $dm_mkfsarg                  = $docker::params::dm_mkfsarg,
@@ -158,6 +170,7 @@ class docker(
   $dm_loopmetadatasize         = $docker::params::dm_loopmetadatasize,
   $dm_thinpooldev              = $docker::params::dm_thinpooldev,
   $dm_use_deferred_removal     = $docker::params::dm_use_deferred_removal,
+  $dm_use_deferred_deletion    = $docker::params::dm_use_deferred_deletion,
   $bridge                      = $docker::params::bridge,
   $iptables                    = $docker::params::iptables,
   $ip_masq                     = $docker::params::ip_masq,
@@ -174,7 +187,6 @@ class docker(
   if $insecure_registry {
     validate_array($insecure_registry)
   }
-
   if $add_registry {
     validate_array($add_registry)
   }
@@ -196,12 +208,18 @@ class docker(
     )
   }
 
+  if $dm_auto_storage_setup {
+    validate_bool($dm_auto_storage_setup)
+    validate_re($storage_driver, '^(devicemapper)$', 'auto_storage_setup only works with storage_driver devicemapper.')
+  }
   if $dm_fs {
     validate_re($dm_fs, '^(ext4|xfs)$', 'Only ext4 and xfs are supported currently for dm_fs.')
   }
 
   class { 'docker::install': } ->
-  class { 'docker::config': } ~>
+  class { 'docker::config': 
+    dm_auto_storage_setup => $dm_auto_storage_setup,
+  } ~>
   class { 'docker::service': }
   contain 'docker::install'
   contain 'docker::config'
