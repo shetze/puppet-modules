@@ -1,6 +1,6 @@
 {
   "name": "LunetIX-oscp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "LunetIX",
   "summary": "module to install and configure OpenStack Container Platform",
   "license": "Apache 2.0",
