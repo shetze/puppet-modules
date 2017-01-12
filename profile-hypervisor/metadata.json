@@ -1,0 +1,15 @@
+{
+  "name": "LunetIX/hypervisor",
+  "version": "0.8.0",
+  "author": "LunetIX",
+  "summary": "Simple module to deploy a RHV hypervisor prepared for Gluster HCI",
+  "license": "Apache 2.0",
+  "source": "https://github.com/shetze/puppet-modules",
+  "project_page": "https://github.com/shetze/puppet-modules",
+  "issues_url": "https://github.com/shetze/puppet-modules/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
+    {"name":"crayfishx-firewalld","version_requirement":">= 3.1.0"}
+  ]
+}
+
