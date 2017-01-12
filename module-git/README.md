@@ -15,14 +15,16 @@
 
 ## Overview
 
-The git module configures git server (and client).
+The git module installs, configures and manages the git service in conjuntion with a Red Hat Satellite server.
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
+The git module manages both the installation and configuration of git as well
+as extends Puppet to allow management of git resources, such as creating new
+repos, manage ssh keys for git access, and manage post-receive hooks to
+automate propagation of puppet modules into the Satellite-6 server.
+
+## Setup
 
 ### What git affects
 
