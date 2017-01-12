@@ -1,0 +1,46 @@
+#! /bin/bash
+
+# ToDo:
+# - add getopt command line handling
+# - verify valid kinit credentials
+# - revoke cert from IPA if key not present
+
+
+cockpit_host=$1
+certname=$(echo $cockpit_host | tr '.' '_')
+
+ipa host-find --hostname=$cockpit_host >/dev/null
+host_found=$?
+if [ $host_found != 0 ]; then
+  echo -e "\nUsage: $0 <fqdn>\n\n  This tool creates a new cockpit service certificate for an IPA host <fqdn>.\n  You need to provide a valid hostname for an existing host\n  and you need to have a kerberos ticket with adminstrative access to IPA\n  (like with 'kinit admin@REALM')\n"
+  exit 1
+fi
+
+if [ -f cockpit-certs/key/${certname}.key ]; then
+  echo -e "\nError:\n  A key for host $cockpit_host already exists.\n  Please try to re-use that key or revoke the cert in IPA\n  and delete the key here: cockpit-certs/key/${certname}.key.\n"
+  exit 2
+fi
+
+if [ ! -d cockpit-certs/csr ]; then
+  mkdir -p cockpit-certs/{csr,key,certs,bundle}
+  chmod 0700 cockpit-certs/{key,bundle}
+fi
+
+echo -e "\n  Creating a cockpit service certificate for host $cockpit_host\n..."
+openssl genrsa -out cockpit-certs/key/${certname}.key 2048
+echo -n "."
+openssl req -new -key cockpit-certs/key/${certname}.key -out cockpit-certs/csr/${certname}.csr
+echo -n "."
+serial=$(ipa cert-request --add --principal=cockpit/$cockpit_host cockpit-certs/csr/${certname}.csr|grep number:|cut -d' ' -f5)
+echo -n "."
+ipa cert-show --out cockpit-certs/certs/${certname}.pem $serial
+echo -n "."
+echo >>cockpit-certs/certs/${certname}.pem
+echo -n "."
+dos2unix cockpit-certs/certs/${certname}.pem
+echo -n "."
+cat cockpit-certs/certs/${certname}.pem cockpit-certs/key/${certname}.key >cockpit-certs/bundle/${certname}.bundle
+echo "... Done"
+
+echo -e "You find your new cert buldle for your cockpit host $cockpit_host here: cockpit-certs/bundle/${certname}.bundle\n"
+
