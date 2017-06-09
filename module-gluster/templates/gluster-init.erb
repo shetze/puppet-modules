@@ -1,0 +1,45 @@
+
+export NODE1=gl01.<%= @domain %>
+export NODE2=gl02.<%= @domain %>
+export NODE3=gl03.<%= @domain %>
+
+
+gluster peer probe $NODE1
+gluster peer probe $NODE2
+gluster peer probe $NODE3
+
+gluster volume create vmstore replica 3 $NODE1:/rhgs/brick01/vmstore $NODE2:/rhgs/brick01/vmstore $NODE3:/rhgs/brick01/vmstore
+gluster volume set vmstore group virt
+gluster volume set vmstore storage.owner-uid 36 && gluster volume set vmstore storage.owner-gid 36
+gluster volume set vmstore features.shard on
+gluster volume set vmstore features.shard-block-size 512MB
+gluster volume set vmstore performance.low-prio-threads 16
+gluster volume set vmstore cluster.data-self-heal-algorithm full
+gluster volume set vmstore nfs.disable on
+gluster volume set vmstore cluster.shd-wait-qlength 10000
+gluster volume set vmstore cluster.shd-max-threads 4
+gluster volume set vmstore network.remote-dio disable
+gluster volume set vmstore performance.strict-o-direct on
+gluster volume set vmstore locking-scheme granular
+gluster volume set vmstore network.ping-timeout 30
+gluster volume set vmstore user.cifs off
+gluster volume start vmstore
+
+
+gluster volume create data replica 3 $NODE1:/rhgs/brick02/data $NODE2:/rhgs/brick02/data $NODE3:/rhgs/brick02/data
+gluster volume set data group virt
+gluster volume set data storage.owner-uid 36 && gluster volume set data storage.owner-gid 36
+gluster volume set data features.shard on
+gluster volume set data features.shard-block-size 512MB
+gluster volume set data performance.low-prio-threads 16
+gluster volume set data cluster.data-self-heal-algorithm full
+gluster volume set data nfs.disable on
+gluster volume set data cluster.shd-wait-qlength 10000
+gluster volume set data cluster.shd-max-threads 4
+gluster volume set data network.remote-dio disable
+gluster volume set data performance.strict-o-direct on
+gluster volume set data locking-scheme granular
+gluster volume set data network.ping-timeout 30
+gluster volume set data user.cifs off
+gluster volume start data
+

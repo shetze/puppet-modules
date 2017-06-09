@@ -1,0 +1,62 @@
+export NODE1=gl01.<%= @domain %>
+export NODE2=gl02.<%= @domain %>
+export NODE3=gl03.<%= @domain %>
+
+cat >>/etc/hosts <<EOF
+<%= @gluster_network %>.20 $NODE1
+<%= @gluster_network %>.21 $NODE2
+<%= @gluster_network %>.22 $NODE3
+EOF
+
+pvremove /dev/<%= @gluster_partition %>
+pvcreate --dataalignment <%= @gluster_dataalignment %> /dev/<%= @gluster_partition %>
+vgcreate HCI_Storage /dev/<%= @gluster_partition %>
+lvcreate --thinpool HCI_Storage/vg1_pool --size <%= @gluster_pool_size %> --poolmetadatasize <%= @gluster_pool_metadatasize %>
+lvcreate --thin --name data --virtualsize <%= @gluster_data_brick_size %> HCI_Storage/vg1_pool
+mkfs.xfs -f -i size=512 -n size=8192 /dev/HCI_Storage/data
+lvcreate --thin --name vmstore --virtualsize  <%= @gluster_vmstore_brick_size %> HCI_Storage/vg1_pool
+mkfs.xfs -f -i size=512 -n size=8192 /dev/HCI_Storage/vmstore
+
+mkdir -p /rhgs/brick01 /rhgs/brick02
+
+cat >>/etc/fstab <<EOF
+/dev/HCI_Storage/vmstore /rhgs/brick01  xfs   defaults    0 0
+/dev/HCI_Storage/data    /rhgs/brick02  xfs   defaults    0 0
+EOF
+
+mount -a
+
+mkdir -p /rhgs/brick01/vmstore /rhgs/brick02/data
+
+mkdir /etc/systemd/system/glusterd.service.d
+
+
+cat >/etc/systemd/system/glusterd.service.d/override.conf <<EOF
+[Service]
+CPUAccounting=true
+Slice=glusterfs.slice
+EOF
+
+cat >/etc/systemd/system/glusterfs.slice <<EOF
+[Slice]
+CPUQuota=<%= @gluster_cpu_quota %>
+EOF
+
+systemctl daemon-reload
+systemctl start glusterd
+
+semanage fcontext -a -t glusterd_brick_t "/rhgs/brick01(/.*)?"
+semanage fcontext -a -t glusterd_brick_t "/rhgs/brick02(/.*)?"
+restorecon -Rv /rhgs/brick01
+restorecon -Rv /rhgs/brick02
+
+
+
+mv /var/lib/glusterd/hooks/1/set/post/S30samba-set.sh /var/lib/glusterd/hooks/1/set/post/DS30samba-set.sh
+mv /var/lib/glusterd/hooks/1/start/post/S30samba-start.sh /var/lib/glusterd/hooks/1/start/post/DS30samba-start.sh
+mv /var/lib/glusterd/hooks/1/stop/pre/S30samba-stop.sh /var/lib/glusterd/hooks/1/stop/pre/DS30samba-stop.sh
+mv /var/lib/glusterd/hooks/1/reset/post/S31ganesha-reset.sh /var/lib/glusterd/hooks/1/reset/post/DS31ganesha-reset.sh
+mv /var/lib/glusterd/hooks/1/start/post/S31ganesha-start.sh /var/lib/glusterd/hooks/1/start/post/DS31ganesha-start.sh
+mv /var/lib/glusterd/hooks/1/start/post/S29CTDBsetup.sh /var/lib/glusterd/hooks/1/start/post/DS29CTDBsetup.sh
+mv /var/lib/glusterd/hooks/1/stop/pre/S29CTDB-teardown.sh /var/lib/glusterd/hooks/1/stop/pre/DS29CTDB-teardown.sh
+

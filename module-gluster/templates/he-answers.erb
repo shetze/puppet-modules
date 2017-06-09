@@ -1,0 +1,18 @@
+[environment:default]
+OVEHOSTED_NETWORK/fqdn=str:hosted-engine.domain1.com
+OVEHOSTED_NETWORK/gateway=str:10.x.x.x
+OVEHOSTED_NETWORK/bridgeIf=str:em1
+OVEHOSTED_STORAGE/storageDomainConnection=str:10.y.y.x:/engine
+OVEHOSTED_STORAGE/mntOptions=str:backup-volfile-servers=10.y.y.y:10.y.y.z
+OVEHOSTED_VM/vmMACAddr=str:xx:xx:xx:xx:xx:xx
+OVEHOSTED_VM/ovfArchive=str:<path to ova, for example /usr/share/ovirt-engine-appliance/rhevm-appliance-20160428.0-1.el7ev.ova>
+OVEHOSTED_VM/cloudinitInstanceDomainName=str:domain1.com
+OVEHOSTED_VM/cloudinitInstanceHostName=str:hosted-engine.domain1.com
+OVEHOSTED_VM/cloudinitRootPwd=str:password
+OVEHOSTED_ENGINE/adminPassword=str:enginepwd
+OVEHOSTED_ENGINE/appHostName=str:hosted-engine1
+OVEHOSTED_NOTIF/smtpPort=str:25
+OVEHOSTED_NOTIF/smtpServer=str:localhost
+OVEHOSTED_NOTIF/sourceEmail=str:root@localhost
+OVEHOSTED_NOTIF/destEmail=str:root@localhost
+OVEHOSTED_CORE/tempDir=str:/home/tmp

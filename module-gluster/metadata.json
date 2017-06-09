@@ -1,0 +1,15 @@
+{
+  "name": "LunetIX/gluster",
+  "version": "0.2.0",
+  "author": "LunetIX",
+  "summary": "A simple module to install and configure a Gluster service for RHEL.",
+  "license": "Apache 2.0",
+  "source": "https://github.com/shetze/puppet-modules",
+  "project_page": "https://github.com/shetze/puppet-modules",
+  "issues_url": "https://github.com/shetze/puppet-modules/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
+    {"name":"crayfishx-firewalld","version_requirement":"2.2.0"}
+  ]
+}
+

@@ -1,0 +1,54 @@
+[hosts]
+rhevm.fqdn.com
+
+[RH-subscription]
+action=register
+username=<username>
+password=<password>
+pool=<pool-id>
+
+[RH-subscription2]
+action=disable-repos
+repos=
+
+[RH-subscription3]
+action=enable-repos
+repos=rh-gluster-3-nagios-for-rhel-7-server-rpms,rhel-7-server-rpms,rhel-7-server-supplementary-rpms,rhel-7-server-rhv-4.0-rpms,jb-eap-7-for-rhel-7-server-rpms
+
+[yum]
+action=install
+packages=nagios-server-addons,ntp
+update=no
+
+[shell1]
+action=execute
+command=engine-config -s AllowClusterWithVirtGlusterEnabled=true
+
+[shell2]
+action=execute
+command=configure-gluster-nagios  -c Default -H <gluster_IP_address> -m auto -n <rhevm.fqdn.com> -f
+
+# Setup ntp on the servers 
+# Disable the existing public servers
+[shell3]
+action=execute
+command=sed -i 's/^\(server .*iburst\)/#\1/' /etc/ntp.conf
+
+# Add custom NTP server
+[update-file]
+action=add
+dest=/etc/ntp.conf
+line=server <NTP-server> iburst
+
+[service1]
+action=enable
+service=ntpd
+
+[service2]
+action=restart
+service=ntpd
+
+[service3]
+action=restart
+service=ovirt-engine
+

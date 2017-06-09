@@ -1,0 +1,222 @@
+# A sample configuration file to setup ROBO
+
+# EDITME: @1: Change to 3 IP addresses of the network intended for gluster traffic
+# Values provided here are used to probe the gluster hosts.
+[hosts]
+10.70.X1.Y1
+10.70.X1.Y2
+10.70.X1.Y3
+
+[disktype]
+raid6
+
+# EDITME: @2: Specify the number of data disks in RAID configuration
+[diskcount]
+4
+
+# EDITME: @3: Specify the configured stripesize. This is used to align the xfs filesystem
+[stripesize]
+256
+
+# EDITME: @4: Provide the subscription details
+# Register to RHSM only on second and third hosts
+[RH-subscription1:10.70.X1.{Y2,Y3}]
+action=register
+username=<username>
+password=<passwd>
+pool=<pool-id>
+
+[RH-subscription2]
+action=disable-repos
+repos=
+
+[RH-subscription3]
+action=enable-repos
+repos=rhel-7-server-rpms,rh-gluster-3-for-rhel-7-server-rpms,rhel-7-server-rhv-4-mgmt-agent-rpms
+
+[yum1]
+action=install
+packages=vdsm,vdsm-gluster,ovirt-hosted-engine-setup,screen,gluster-nagios-addons
+update=yes
+
+# Setup ntp on the servers before any other operations are done
+# Disable the existing public servers
+[shell1]
+action=execute
+command=sed -i 's/^\(server .*iburst\)/#\1/' /etc/ntp.conf
+
+# EDITME: @5: Specify the NTP server to be used
+# Add custom server
+[update-file1]
+action=add
+dest=/etc/ntp.conf
+line=server <NTP-SERVER> iburst
+
+[service1]
+action=enable
+service=ntpd
+
+[service2]
+action=restart
+service=ntpd
+
+[shell2]
+action=execute
+command=vdsm-tool configure --force
+
+# Disable multipath
+[script1]
+action=execute
+file=/usr/share/ansible/gdeploy/scripts/disable-multipath.sh
+
+# EDITME: @6: Specify the device to create the bricks
+[pv]
+action=create
+devices=sdb
+
+# EDITME: @7: Specify the pvname
+[vg1]
+action=create
+vgname=RHGS_vg1
+pvname=sdb
+
+[lv1]
+action=create
+vgname=RHGS_vg1
+lvname=engine_lv
+lvtype=thick
+size=100GB
+mount=/rhgs/engine
+
+# EDITME: @8: Provide the thinpool size based on your device capacity
+[lv2]
+action=create
+vgname=RHGS_vg1
+poolname=lvthinpool
+lvtype=thinpool
+poolmetadatasize=16GB
+chunksize=1024k
+size=3.5TB
+
+# EDITME: @9: Update the virtualsize available for vmstore volume brick
+[lv3]
+action=create
+lvname=lv_vmrootdisks
+poolname=lvthinpool
+vgname=RHGS_vg1
+lvtype=thinlv
+mount=/rhgs/brick1
+virtualsize=1TB
+
+# EDITME: @10: Update the virtualsize available for data volume brick
+[lv4]
+action=create
+lvname=lv_vmaddldisks
+poolname=lvthinpool
+vgname=RHGS_vg1
+lvtype=thinlv
+mount=/rhgs/brick2
+virtualsize=2TB
+
+[selinux]
+yes
+
+# EDITME: @11: Update the device name to be used as cache (attached as lvmcache)
+[vg2]
+action=extend
+vgname=RHGS_vg1
+pvname=sdc
+
+# EDITME: @12: Update the device name to be used as cache and cachesize
+[lv5]
+action=setup-cache
+ssd=sdc
+vgname=RHGS_vg1
+poolname=lvthinpool
+cache_lv=lvcache
+cache_lvsize=220GB
+
+[service4]
+action=stop
+service=NetworkManager
+
+[service5]
+action=disable
+service=NetworkManager
+
+# shell3, shell4, shell5 setups the glusterfs.slice with CPUQuota 400%
+[shell3]
+action=execute
+command=mkdir /etc/systemd/system/glusterd.service.d,
+
+[shell4]
+action=execute
+command=echo -e "[Service]\nCPUAccounting=yes\nSlice=glusterfs.slice" >> /etc/systemd/system/glusterd.service.d/99-cpu.conf,
+
+[shell5]
+action=execute
+command=echo -e "[Slice]\nCPUQuota=400%" >> /etc/systemd/system/glusterfs.slice,systemctl daemon-reload
+
+[service6]
+action=restart
+service=glusterd
+
+[firewalld]
+action=add
+ports=111/tcp,2049/tcp,54321/tcp,5900/tcp,5900-6923/tcp,5666/tcp,16514/tcp
+services=glusterfs
+
+# EDITME: @13: Update the FQDN of hosted engine
+[update-file2]
+action=edit
+dest=/etc/nagios/nrpe.cfg
+replace=allowed_hosts
+line=allowed_hosts=<rhevm-host.fqdn.com>
+
+[service7]
+action=restart
+service=nrpe
+
+[script2]
+action=execute
+file=/usr/share/ansible/gdeploy/scripts/disable-gluster-hooks.sh
+
+[volume1]
+action=create
+volname=engine
+transport=tcp
+replica=yes
+replica_count=3
+key=group,storage.owner-uid,storage.owner-gid,features.shard,features.shard-block-size,performance.low-prio-threads,cluster.data-self-heal-algorithm,cluster.locking-scheme,cluster.shd-max-threads,cluster.shd-wait-qlength,performance.strict-o-direct,network.remote-dio,network.ping-timeout,user.cifs,nfs.disable
+value=virt,36,36,on,512MB,32,full,granular,8,10000,on,off,30,off,on
+brick_dirs=/rhgs/engine/enginebrick
+
+[volume2]
+action=create
+volname=vmstore
+transport=tcp
+replica=yes
+replica_count=3
+key=group,storage.owner-uid,storage.owner-gid,features.shard,features.shard-block-size,performance.low-prio-threads,cluster.data-self-heal-algorithm,cluster.locking-scheme,cluster.shd-max-threads,cluster.shd-wait-qlength,performance.strict-o-direct,network.remote-dio,network.ping-timeout,user.cifs,nfs.disable
+value=virt,36,36,on,512MB,32,full,granular,8,10000,on,off,30,off,on
+brick_dirs=/rhgs/brick1/vmstore
+
+[volume3]
+action=create
+volname=data
+transport=tcp
+replica=yes
+replica_count=3
+key=group,storage.owner-uid,storage.owner-gid,features.shard,features.shard-block-size,performance.low-prio-threads,cluster.data-self-heal-algorithm,cluster.locking-scheme,cluster.shd-max-threads,cluster.shd-wait-qlength,performance.strict-o-direct,network.remote-dio,network.ping-timeout,user.cifs,nfs.disable
+value=virt,36,36,on,512MB,32,full,granular,8,10000,on,off,30,off,on
+brick_dirs=/rhgs/brick2/data
+
+# EDITME: @14: Update the first host IP address where rhevm-appliance is installed
+[yum2:10.70.X1.Y1]
+action=install
+packages=rhevm-appliance
+
+# [shell6]
+# action=execute
+# command=reboot
+
