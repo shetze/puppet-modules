@@ -14,6 +14,8 @@ class gluster::rejoin (
   # additional trusted.glusterfs.volume-id FACL values must be provided to allow re-sync of the existing bricks
   # this FACL values must be obtained from a remaining node with 'getfattr -n trusted.glusterfs.volume-id /rhgs/brick0?/*/'
   # last, the fqdn for one of the remaining nodes must be provided to initiate the sync in gluster_restore_from_node
+  # gluster_op_version determines the compatibility level of the gluster backend
+  # https://access.redhat.com/articles/2356261
   file { '/var/lib/glusterd/glusterd.info':
     require => [ Exec['prepare_glusterd'], ],
     ensure  => file,
