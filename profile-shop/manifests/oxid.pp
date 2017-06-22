@@ -29,7 +29,7 @@ class shop::oxid (
       semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/oxid/config.inc.php" &&
       restorecon -R /var/www/html/oxid',
     unless => 'ls -Z /var/www/html/oxid/.htaccess|grep -q httpd_sys_rw_content_t',
-    path    => '/usr/bin/',
+    path    => ['/usr/bin/', '/usr/sbin/', ],
   }
   
 }

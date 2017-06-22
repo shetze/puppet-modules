@@ -45,7 +45,7 @@
 #
 # === Copyright
 #
-# Copyright 2016 Sebastian Hetze
+# Copyright 2017 Sebastian Hetze
 #
 class shop (
   $install_db   = true,
