@@ -124,6 +124,14 @@ class gluster (
     mode    => '0755',
   }
 
+  file { '/root/gluster-init.sh':
+    ensure  => file,
+    content => template('gluster/gluster-init.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
   exec { 'prepare_glusterd':
     require => [ File['/root/gluster-setup.sh'], ],
     command => "/bin/bash /root/gluster-setup.sh",
@@ -133,7 +141,7 @@ class gluster (
 
   if $gluster_init {
     exec { 'init_glusterd':
-      require => [ Exec['prepare_glusterd'], ],
+      require => [ Exec['prepare_glusterd'], File['/root/gluster-init.sh'], ],
       command => "/bin/bash /root/gluster-init.sh",
       unless  => 'gluster peer status|grep -q "Number of Peers: 2"',
       path    => [ '/usr/sbin/','/usr/bin/', ],
