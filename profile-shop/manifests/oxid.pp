@@ -20,6 +20,7 @@ class shop::oxid (
   }
 
   exec { 'selinux_prepare_oxid':
+    require => [ Package['oxid'], ],
     command => 'semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/oxid/log(/.*)?" &&
       semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/oxid/tmp(/.*)?" &&
       semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/oxid/export(/.*)?" &&
