@@ -9,7 +9,7 @@ OPTIONS='<% -%>
 <% if @dns %><% @dns_array.each do |address| %> --dns <%= address -%><% end %><% end -%>
 <% if @dns_search %><% @dns_search.each do |domain| %> --dns-search <%= domain -%><% end %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param -%><% end %><% end -%>
-'
+ --log-driver=journald'
 
 DOCKER_CERT_PATH=/etc/docker
 
