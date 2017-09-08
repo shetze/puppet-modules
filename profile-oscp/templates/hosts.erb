@@ -1,0 +1,71 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+lb
+
+[OSEv3:vars]
+ansible_ssh_user=shetze
+deployment_type=openshift-enterprise
+ansible_become=yes
+debug_level=2
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=bx-n4.lunetix.org
+openshift_master_cluster_public_hostname=openshift.lunetix.org
+openshift_master_default_subdomain=oscp.lunetix.org
+
+#osm_cluster_network_cidr=172.29.0.0/14
+
+#openshift_portal_net=172.28.0.0/16
+os_sdn_network_plugin_name=redhat/openshift-ovs-multitenant
+openshift_registry_selector='region=infra'
+openshift_hosted_registry_replicas=1
+openshift_hosted_manage_registry=true
+
+#metrics and logging
+openshift_logging_kibana_hostname=kibana.oscp.lunetix.org
+openshift_hosted_metrics_storage_kind=nfs
+openshift_hosted_metrics_storage_access_modes=['ReadWriteOnce']
+openshift_hosted_metrics_storage_host=bx-ipa.lunetix.org
+openshift_hosted_metrics_storage_nfs_directory=/home/nfs/oscp
+openshift_hosted_metrics_storage_volume_name=pv0001
+openshift_hosted_metrics_storage_volume_size=5Gi
+openshift_master_metrics_public_url=https://metrics.oscp.lunetix.org/hawkular/metrics
+openshift_hosted_metrics_deploy=true
+
+#openshift_logging_kibana_nodeselector=region=infra
+openshift_hosted_logging_storage_kind=nfs
+openshift_hosted_logging_storage_access_modes=['ReadWriteOnce']
+openshift_hosted_logging_storage_host=bx-ipa.lunetix.org
+openshift_hosted_logging_storage_nfs_directory=/home/nfs/oscp
+openshift_hosted_logging_storage_volume_name=pv0002
+openshift_hosted_logging_storage_volume_size=5Gi
+openshift_master_logging_public_url=https://logging.psd01.wdf.sap.corp
+openshift_hosted_logging_deploy=true
+openshift_hosted_registry_storage_kind=nfs
+openshift_hosted_registry_storage_access_modes=['ReadWriteOnce']
+openshift_hosted_registry_storage_host=bx-ipa.lunetix.org
+openshift_hosted_registry_storage_nfs_directory=/home/nfs/oscp
+openshift_hosted_registry_storage_volume_name=pv0003
+openshift_hosted_registry_storage_volume_size=5Gi
+openshift_clock_enabled=true
+
+# host group for masters
+[masters]
+bx-n4.lunetix.org
+
+# host group for etcd
+[etcd]
+bx-n4.lunetix.org
+
+# Specify load balancer host
+[lb]
+bx-n5.lunetix.org
+
+# host group for nodes, includes region info
+[nodes]
+bx-n4.lunetix.org	openshift_schedulable=false
+bx-n5.lunetix.org	openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+bx-n[6:8].lunetix.org	openshift_node_labels="{'region': 'app', 'zone': 'default'}"
